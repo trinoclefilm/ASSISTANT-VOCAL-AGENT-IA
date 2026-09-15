@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TRINOCLE FILM · Vidéo Interactive B2B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --bg:       #050B12;
+  --bg2:      #070E18;
+  --bg3:      #04080F;
+  --surf:     #0C1622;
+  --surf2:    #111F33;
+  --bdr:      #192B42;
+  --bdr2:     #1F3555;
+  --text:     #E2EDF8;
+  --text2:    #A8C0D6;
+  --muted:    #5E7A96;
+  --accent:   #00B4D8;
+  --acl:      rgba(0,180,216,.14);
+  --ac2:      #0077B6;
+  --gold:     #F4C542;
+  --gdim:     rgba(244,197,66,.12);
+  --success:  #06D6A0;
+  --r:        16px;
+  --rsm:      10px;
+}
+
+/* ─── RESET ──────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',system-ui,sans-serif;
+  font-size:16px;line-height:1.6;font-weight:400;
+  min-height:100vh;overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+ul{list-style:none}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ─── NAVIGATION ─────────────────────────────────── */
+.nav{
+  position:fixed;
+  top:env(safe-area-inset-top,0);left:0;right:0;
+  z-index:100;
+  padding:14px 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  background:rgba(5,11,18,.82);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(25,43,66,.55);
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:17px;
+  letter-spacing:-.3px;white-space:nowrap;
+}
+.nav-logo .t{color:var(--accent)}.nav-logo .r{color:rgba(255,255,255,.9)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{
+  font-size:13px;font-weight:500;color:var(--muted);
+  transition:color .2s;white-space:nowrap;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  background:linear-gradient(135deg,var(--ac2),var(--accent));
+  color:#fff;font-size:13px;font-weight:600;
+  padding:9px 20px;border-radius:8px;border:none;white-space:nowrap;
+  box-shadow:0 4px 16px rgba(0,180,216,.25);
+  transition:transform .15s,box-shadow .2s,opacity .2s;
+}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,180,216,.4)}
+.nav-cta:active{transform:translateY(0)}
+@media(max-width:700px){
+  .nav-links{display:none}
+  .nav{padding:12px 20px}
+}
+
+/* ─── HERO ───────────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  padding-top:80px;padding-inline:24px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 35%,rgba(0,119,182,.2) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 60% at 85% 15%,rgba(0,180,216,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 50% at 15% 85%,rgba(10,36,99,.18) 0%,transparent 60%);
+}
+/* subtle grain */
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+  opacity:.3;
+}
+/* floating lens flare */
+.hero-glow{
+  position:absolute;top:18%;left:50%;
+  transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(0,180,216,.08) 0%,transparent 65%);
+  pointer-events:none;
+  animation:glow-pulse 6s ease-in-out infinite alternate;
+}
+@keyframes glow-pulse{from{opacity:.6;transform:translateX(-50%) scale(1)}to{opacity:1;transform:translateX(-50%) scale(1.12)}}
+.hero-inner{position:relative;z-index:1;max-width:880px;width:100%}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,180,216,.08);
+  border:1px solid rgba(0,180,216,.22);
+  border-radius:20px;padding:6px 14px;
+  font-size:11px;font-weight:600;color:var(--accent);
+  text-transform:uppercase;letter-spacing:1.4px;
+  margin-bottom:36px;
+}
+.hero-badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);
+  animation:dot-blink 2.2s ease-in-out infinite;
+}
+@keyframes dot-blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hero-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(44px,9vw,94px);
+  line-height:.97;letter-spacing:-2.5px;
+  text-wrap:balance;margin-bottom:28px;
+}
+.hero-title .line1{display:block;color:var(--text)}
+.hero-title .line2{
+  display:block;
+  background:linear-gradient(130deg,#00D4FF 0%,var(--accent) 40%,var(--ac2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-desc{
+  max-width:580px;margin:0 auto 44px;
+  font-size:18px;line-height:1.75;color:var(--text2);font-weight:300;
+}
+.hero-actions{
+  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--ac2),var(--accent));
+  color:#fff;font-size:15px;font-weight:600;
+  padding:15px 34px;border-radius:10px;border:none;
+  box-shadow:0 8px 36px rgba(0,180,216,.32);
+  transition:transform .15s,box-shadow .2s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 44px rgba(0,180,216,.48)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{
+  background:none;color:var(--text2);
+  font-size:15px;font-weight:500;
+  padding:15px 28px;border-radius:10px;
+  border:1px solid var(--bdr2);
+  transition:border-color .2s,color .2s;
+}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.hero-stats{
+  display:flex;gap:0;justify-content:center;
+  margin-top:80px;padding-top:48px;
+  border-top:1px solid var(--bdr);
+  flex-wrap:wrap;
+}
+.hero-stat{
+  padding:0 40px;text-align:center;
+  border-right:1px solid var(--bdr);
+}
+.hero-stat:last-child{border-right:none}
+.hero-stat .sn{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:38px;color:var(--text);
+  font-variant-numeric:tabular-nums;line-height:1;
+}
+.hero-stat .sn em{color:var(--accent);font-style:normal}
+.hero-stat .sl{
+  font-size:12px;color:var(--muted);font-weight:500;
+  text-transform:uppercase;letter-spacing:.8px;margin-top:6px;
+}
+@media(max-width:600px){
+  .hero-stat{padding:16px 24px;border-right:none;border-bottom:1px solid var(--bdr)}
+  .hero-stat:last-child{border-bottom:none}
+}
+
+/* ─── MARQUEE STRIP ──────────────────────────────── */
+.strip{
+  border-top:1px solid var(--bdr);
+  border-bottom:1px solid var(--bdr);
+  background:var(--bg2);
+  padding:16px 0;
+  overflow:hidden;
+}
+.strip-track{
+  display:flex;gap:56px;align-items:center;
+  animation:marquee 30s linear infinite;
+  width:max-content;
+}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.strip-item{
+  font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.3px;flex-shrink:0;
+  display:flex;align-items:center;gap:8px;
+}
+.strip-item::before{
+  content:'◆';font-size:6px;color:var(--accent);
+}
+
+/* ─── SECTION WRAPPER ────────────────────────────── */
+section{padding-block:100px}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:24px}
+.wrap-narrow{max-width:720px;margin:0 auto;padding-inline:24px}
+.sec-head{text-align:center;margin-bottom:64px}
+.eyebrow{
+  font-size:11px;font-weight:600;color:var(--accent);
+  text-transform:uppercase;letter-spacing:1.6px;
+  margin-bottom:14px;display:block;
+}
+.sec-head h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(28px,5vw,48px);letter-spacing:-1px;
+  text-wrap:balance;margin-bottom:16px;
+}
+.sec-head p{
+  max-width:520px;margin:0 auto;
+  font-size:16px;color:var(--text2);font-weight:300;line-height:1.75;
+}
+
+/* ─── FEATURES ───────────────────────────────────── */
+.feat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+}
+.feat-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:32px 28px;
+  transition:border-color .2s,transform .2s;
+}
+.feat-card:hover{border-color:var(--bdr2);transform:translateY(-3px)}
+.feat-icon{font-size:26px;margin-bottom:20px;display:block}
+.feat-card h3{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:17px;margin-bottom:10px;
+}
+.feat-card p{font-size:14px;color:var(--text2);line-height:1.7;font-weight:300}
+@media(max-width:720px){
+  .feat-grid{grid-template-columns:1fr}
+}
+@media(min-width:480px) and (max-width:720px){
+  .feat-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ─── USE CASES ──────────────────────────────────── */
+.uc-section{background:var(--bg2)}
+.uc-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;
+}
+.uc-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:28px 18px;text-align:center;
+  transition:border-color .22s,background .22s,transform .2s;
+}
+.uc-card:hover{
+  border-color:var(--accent);
+  background:rgba(0,180,216,.05);
+  transform:translateY(-3px);
+}
+.uc-ico{font-size:30px;margin-bottom:14px}
+.uc-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:13px;margin-bottom:8px;line-height:1.3;
+}
+.uc-desc{font-size:12px;color:var(--muted);line-height:1.55}
+@media(max-width:800px){
+  .uc-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:420px){
+  .uc-grid{grid-template-columns:1fr}
+}
+
+/* ─── FUNNEL ─────────────────────────────────────── */
+.funnel-layout{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;
+}
+.funnel-text .eyebrow{margin-bottom:14px}
+.funnel-text h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(26px,4vw,40px);letter-spacing:-.8px;
+  margin-bottom:18px;text-wrap:balance;
+}
+.funnel-text p{
+  font-size:15px;color:var(--text2);line-height:1.8;
+  font-weight:300;margin-bottom:24px;
+}
+.funnel-pills{display:flex;flex-wrap:wrap;gap:8px}
+.funnel-pill{
+  background:var(--acl);border:1px solid rgba(0,180,216,.2);
+  border-radius:20px;padding:5px 13px;
+  font-size:12px;font-weight:600;color:var(--accent);
+}
+/* Interactive demo mockup */
+.funnel-demo{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.4);
+}
+.demo-screen{
+  background:#000;aspect-ratio:16/9;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.demo-screen-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(145deg,#070F1C 0%,#0A1E40 50%,#051830 100%);
+}
+/* Fake widescreen visual */
+.demo-visual{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.demo-avatar{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,#0A2463,#0077B6);
+  border:2px solid rgba(0,180,216,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;position:relative;z-index:1;
+}
+.demo-ring{
+  position:absolute;
+  width:96px;height:96px;border-radius:50%;
+  border:1px solid rgba(0,180,216,.25);
+  animation:ring-pulse 2.5s ease-in-out infinite;
+}
+.demo-ring2{
+  position:absolute;
+  width:120px;height:120px;border-radius:50%;
+  border:1px solid rgba(0,180,216,.12);
+  animation:ring-pulse 2.5s ease-in-out infinite .8s;
+}
+@keyframes ring-pulse{
+  0%{transform:scale(1);opacity:1}
+  100%{transform:scale(1.6);opacity:0}
+}
+/* Subtitle bar */
+.demo-sub{
+  position:absolute;bottom:44px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.65);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);border-radius:6px;
+  padding:6px 14px;font-size:11px;color:rgba(255,255,255,.8);
+  white-space:nowrap;z-index:2;
+}
+/* Interactive buttons overlay */
+.demo-btns{
+  position:absolute;bottom:10px;left:0;right:0;
+  display:flex;gap:6px;justify-content:center;
+  z-index:3;flex-wrap:wrap;padding-inline:12px;
+}
+.demo-btn{
+  background:rgba(0,180,216,.22);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(0,180,216,.4);
+  border-radius:16px;padding:5px 12px;
+  font-size:11px;font-weight:600;color:#fff;
+  cursor:pointer;
+  transition:background .2s,border-color .2s,transform .15s;
+}
+.demo-btn:hover{background:rgba(0,180,216,.45);transform:scale(1.04)}
+.demo-btn.active{background:var(--accent);border-color:var(--accent);color:#000}
+/* Progress bar inside demo */
+.demo-progress{
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:rgba(255,255,255,.1);
+}
+.demo-prog-fill{
+  height:100%;width:42%;
+  background:linear-gradient(90deg,var(--ac2),var(--accent));
+  border-radius:1px;
+}
+.demo-meta{
+  padding:14px 18px;display:flex;gap:10px;
+  border-top:1px solid var(--bdr);flex-wrap:wrap;
+}
+.demo-badge{
+  font-size:11px;font-weight:600;padding:4px 10px;
+  border-radius:6px;background:var(--acl);
+  color:var(--accent);border:1px solid rgba(0,180,216,.2);
+}
+@media(max-width:800px){
+  .funnel-layout{grid-template-columns:1fr;gap:40px}
+}
+
+/* ─── AUTOMATIONS ────────────────────────────────── */
+.auto-section{background:var(--bg2)}
+.auto-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-bottom:24px;
+}
+.auto-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:28px 24px;
+}
+.auto-pair{
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.auto-ico{
+  width:44px;height:44px;border-radius:10px;
+  background:var(--acl);border:1px solid rgba(0,180,216,.18);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  flex-shrink:0;
+}
+.auto-ico.gold{
+  background:var(--gdim);border-color:rgba(244,197,66,.22);
+}
+.auto-arrow-ico{font-size:16px;color:var(--bdr2)}
+.auto-card h4{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:8px;
+}
+.auto-card p{font-size:13px;color:var(--text2);line-height:1.65;font-weight:300}
+.notion-callout{
+  background:linear-gradient(135deg,rgba(0,119,182,.1),rgba(0,180,216,.05));
+  border:1px solid rgba(0,180,216,.2);border-radius:var(--r);
+  padding:28px 32px;display:flex;gap:32px;align-items:center;flex-wrap:wrap;
+}
+.notion-ico{font-size:36px;flex-shrink:0}
+.notion-text h4{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:8px;
+}
+.notion-text p{font-size:14px;color:var(--text2);line-height:1.7;font-weight:300}
+@media(max-width:720px){
+  .auto-grid{grid-template-columns:1fr}
+}
+
+/* ─── PROCESS ────────────────────────────────────── */
+.process-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;position:relative;
+}
+.process-grid::before{
+  content:'';position:absolute;
+  top:28px;left:14%;width:72%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--bdr2),var(--bdr2),transparent);
+}
+.proc-step{padding:0 16px;text-align:center}
+.proc-num{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--surf);border:2px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;
+  color:var(--accent);position:relative;z-index:1;
+  transition:border-color .2s,background .2s;
+}
+.proc-step:hover .proc-num{
+  border-color:var(--accent);background:var(--acl);
+}
+.proc-weeks{
+  font-size:11px;font-weight:600;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;
+}
+.proc-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:15px;margin-bottom:8px;
+}
+.proc-desc{font-size:13px;color:var(--muted);line-height:1.6;font-weight:400}
+@media(max-width:700px){
+  .process-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .process-grid::before{display:none}
+}
+@media(max-width:400px){
+  .process-grid{grid-template-columns:1fr}
+}
+
+/* ─── ROI ────────────────────────────────────────── */
+.roi-section{background:var(--bg2)}
+.roi-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.roi-block{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:36px 32px;
+}
+.roi-block.lit{
+  border-color:rgba(0,180,216,.3);
+  background:linear-gradient(145deg,rgba(0,119,182,.09),rgba(0,180,216,.04));
+}
+.roi-block h3{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:21px;margin-bottom:6px;margin-top:12px;
+}
+.roi-list{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.roi-list li{
+  display:flex;gap:12px;font-size:14px;
+  color:var(--text2);line-height:1.6;
+  align-items:flex-start;font-weight:300;
+}
+.roi-list li::before{
+  content:'→';color:var(--accent);
+  font-weight:600;flex-shrink:0;margin-top:1px;
+}
+.roi-fig{
+  background:var(--bg3);border:1px solid var(--bdr);
+  border-radius:var(--rsm);padding:20px 24px;
+  margin-top:24px;
+}
+.roi-fig .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.roi-fig .val{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:28px;color:var(--gold);font-variant-numeric:tabular-nums;
+}
+.roi-fig .sub{font-size:12px;color:var(--text2);margin-top:4px;font-weight:300}
+@media(max-width:700px){
+  .roi-grid{grid-template-columns:1fr}
+  .roi-block{padding:28px 24px}
+}
+
+/* ─── PITCH / SORA ───────────────────────────────── */
+.pitch-section{position:relative;overflow:hidden}
+.pitch-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(0,119,182,.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.pitch-inner{text-align:center;position:relative;z-index:1}
+.pitch-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--gdim);border:1px solid rgba(244,197,66,.25);
+  border-radius:8px;padding:8px 16px;margin-bottom:28px;
+}
+.pitch-tag span{
+  font-size:11px;font-weight:600;color:var(--gold);
+  text-transform:uppercase;letter-spacing:1px;
+}
+.pitch-inner h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(26px,4.5vw,46px);letter-spacing:-.8px;
+  margin-bottom:18px;text-wrap:balance;
+}
+.pitch-inner p{
+  max-width:540px;margin:0 auto 40px;
+  font-size:16px;color:var(--text2);line-height:1.8;font-weight:300;
+}
+.pitch-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:48px;
+}
+.pitch-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:28px 24px;text-align:left;
+}
+.pitch-card .ico{font-size:24px;margin-bottom:14px}
+.pitch-card h4{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:8px;
+}
+.pitch-card p{font-size:13px;color:var(--text2);line-height:1.65;font-weight:300}
+@media(max-width:700px){
+  .pitch-cards{grid-template-columns:1fr}
+}
+
+/* ─── CTA ────────────────────────────────────────── */
+.cta-section{
+  background:linear-gradient(140deg,#071428 0%,#0A2463 50%,#023E8A 100%);
+  text-align:center;position:relative;overflow:hidden;
+  padding-block:120px;
+}
+.cta-orb1{
+  position:absolute;top:-100px;right:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:rgba(0,180,216,.09);pointer-events:none;
+}
+.cta-orb2{
+  position:absolute;bottom:-80px;left:-80px;
+  width:350px;height:350px;border-radius:50%;
+  background:rgba(0,119,182,.12);pointer-events:none;
+}
+.cta-inner{position:relative;z-index:1;padding-inline:24px}
+.cta-inner h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(28px,5.5vw,56px);letter-spacing:-1px;
+  margin-bottom:18px;text-wrap:balance;color:#fff;
+}
+.cta-inner p{
+  max-width:500px;margin:0 auto 36px;
+  font-size:17px;color:rgba(255,255,255,.68);
+  line-height:1.75;font-weight:300;
+}
+.cta-note{
+  font-size:13px;color:rgba(255,255,255,.38);
+  margin-top:18px;
+}
+
+/* ─── PODCAST SECTION ────────────────────────────── */
+.pod-section{
+  background:#040810;
+  border-top:1px solid var(--bdr);
+  padding-block:80px;
+}
+.pod-wrap{max-width:820px;margin:0 auto;padding-inline:24px}
+.pod-intro{text-align:center;margin-bottom:48px}
+.pod-intro h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(24px,4vw,38px);letter-spacing:-.6px;
+  margin-bottom:12px;
+}
+.pod-intro p{
+  font-size:15px;color:var(--text2);font-weight:300;
+  max-width:460px;margin:0 auto;
+}
+/* ─ Header */
+.pod-header{
+  background:linear-gradient(135deg,#0A2463 0%,#023E8A 45%,#0096C7 100%);
+  border-radius:18px;padding:36px 32px 28px;
+  position:relative;overflow:hidden;margin-bottom:20px;
+}
+.pod-header::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:rgba(0,180,216,.12);
+}
+.pod-header::after{
+  content:'';position:absolute;bottom:-40px;left:-40px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(0,119,182,.15);
+}
+.pod-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:26px;
+  letter-spacing:-.4px;position:relative;z-index:1;
+}
+.pod-logo .a{color:var(--accent)}.pod-logo .b{color:rgba(255,255,255,.92)}
+.pod-tagline{
+  font-size:13px;font-weight:300;color:rgba(255,255,255,.7);
+  margin-top:4px;letter-spacing:.3px;position:relative;z-index:1;
+}
+.pod-meta{
+  display:flex;gap:14px;margin-top:18px;flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+.pod-meta-item{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:5px 12px;
+  font-size:12px;font-weight:500;color:rgba(255,255,255,.85);
+}
+.waveform{
+  display:flex;align-items:center;gap:4px;
+  margin-top:20px;height:44px;position:relative;z-index:1;
+}
+.wave-bar{
+  width:4px;height:6px;background:rgba(255,255,255,.3);
+  border-radius:3px;transition:background .3s;
+}
+.waveform.playing .wave-bar{
+  background:var(--accent);
+  animation:waveBounce var(--dur,.6s) ease-in-out infinite alternate;
+}
+@keyframes waveBounce{from{height:6px}to{height:var(--h,32px)}}
+/* ─ Player Card */
+.pod-player{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:18px;padding:28px 28px 24px;
+  margin-bottom:20px;
+}
+.now-playing{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.np-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--muted);flex-shrink:0;
+  transition:background .3s;
+}
+.np-dot.active{
+  background:var(--accent);
+  animation:np-pulse 1.4s ease-in-out infinite;
+}
+@keyframes np-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
+.np-label{
+  font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;
+}
+.np-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:17px;color:var(--text);margin-top:2px;line-height:1.3;
+}
+/* Progress */
+.progress-wrap{position:relative;margin-bottom:10px}
+.progress-track{
+  width:100%;height:6px;background:var(--bdr);
+  border-radius:3px;cursor:pointer;position:relative;overflow:visible;
+}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--ac2),var(--accent));
+  border-radius:3px;width:0%;
+  pointer-events:none;
+}
+.progress-thumb{
+  position:absolute;top:50%;left:0%;
+  transform:translate(-50%,-50%);
+  width:14px;height:14px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,180,216,.25);
+  pointer-events:none;
+}
+.time-row{
+  display:flex;justify-content:space-between;
+  font-size:12px;color:var(--muted);font-weight:500;margin-top:8px;
+}
+/* Controls */
+.controls{
+  display:flex;align-items:center;justify-content:center;
+  gap:14px;margin:22px 0 18px;
+}
+.ctrl-btn{
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:22px;
+  transition:color .2s,transform .15s;
+  display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;
+}
+.ctrl-btn:hover{color:var(--text);transform:scale(1.1)}
+.ctrl-btn:active{transform:scale(.95)}
+.ctrl-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.play-btn{
+  width:66px;height:66px;border-radius:50%;
+  background:linear-gradient(135deg,var(--ac2),var(--accent));
+  border:none;cursor:pointer;color:#fff;font-size:26px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(0,180,216,.4);
+  transition:transform .15s,box-shadow .2s;
+}
+.play-btn:hover{transform:scale(1.05);box-shadow:0 8px 32px rgba(0,180,216,.55)}
+.play-btn:active{transform:scale(.97)}
+.play-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.ctrl-label{font-size:10px;color:var(--muted);font-weight:500}
+/* Options */
+.options-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:4px;align-items:flex-start}
+.option-group{flex:1;min-width:160px}
+.option-label{
+  font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;
+}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{
+  padding:5px 11px;border-radius:20px;
+  background:var(--surf2);border:1px solid var(--bdr);
+  font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;
+  transition:all .2s;
+}
+.pill:hover{border-color:var(--accent);color:var(--text)}
+.pill.active{
+  background:rgba(0,180,216,.12);border-color:var(--accent);
+  color:var(--accent);font-weight:600;
+}
+#voiceSelect{
+  width:100%;background:var(--surf2);border:1px solid var(--bdr);
+  color:var(--text);border-radius:var(--rsm);padding:7px 10px;
+  font-family:'DM Sans',sans-serif;font-size:12px;outline:none;cursor:pointer;
+}
+#voiceSelect:focus{border-color:var(--accent)}
+.status-bar{
+  margin-top:16px;padding:8px 14px;background:var(--surf2);
+  border-radius:8px;font-size:12px;color:var(--muted);
+  font-weight:500;text-align:center;
+}
+/* Chapters */
+.chapters-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:18px;overflow:hidden;margin-bottom:20px;
+}
+.chapters-hdr{
+  padding:18px 24px 14px;border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;gap:10px;
+}
+.chapters-hdr h3{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:15px;color:var(--text);
+}
+.ch-count{margin-left:auto;font-size:12px;color:var(--muted);font-weight:500}
+.chapter-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 24px;
+  border-bottom:1px solid rgba(25,43,66,.5);
+  cursor:pointer;transition:background .18s;
+}
+.chapter-item:last-child{border-bottom:none}
+.chapter-item:hover{background:rgba(0,180,216,.04)}
+.chapter-item.active{
+  background:rgba(0,180,216,.07);
+  border-left:3px solid var(--accent);padding-left:21px;
+}
+.ch-num{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
+  color:var(--muted);width:26px;flex-shrink:0;transition:color .2s;
+}
+.chapter-item.active .ch-num{color:var(--accent)}
+.ch-ico{font-size:18px;flex-shrink:0}
+.ch-info{flex:1;min-width:0}
+.ch-title{font-weight:600;font-size:14px;color:var(--text);line-height:1.3}
+.chapter-item.active .ch-title{color:var(--accent)}
+.ch-desc{font-size:12px;color:var(--muted);margin-top:2px;font-weight:400}
+.ch-dur{font-size:11px;color:var(--muted);font-weight:500;flex-shrink:0}
+/* Transcript */
+.transcript-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:18px;padding:22px 24px;
+}
+.transcript-card h3{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:15px;
+  color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.transcript-body{
+  max-height:210px;overflow-y:auto;
+  font-size:14px;line-height:1.75;color:rgba(226,237,248,.75);
+  font-weight:300;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent;
+}
+.transcript-body::-webkit-scrollbar{width:4px}
+.transcript-body::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+.transcript-body .kw{color:var(--accent);font-weight:500}
+/* Responsive podcast player */
+@media(max-width:560px){
+  .pod-header{padding:24px 20px 20px}
+  .pod-player{padding:20px 16px 18px}
+  .controls{gap:10px}
+  .play-btn{width:58px;height:58px;font-size:22px}
+  .ctrl-btn{width:38px;height:38px;font-size:19px}
+  .options-row{flex-direction:column;gap:14px}
+  .chapter-item{padding:12px 16px}
+  .transcript-card{padding:18px 16px}
+}
+
+/* ─── FOOTER ─────────────────────────────────────── */
+.footer{
+  background:var(--bg3);
+  border-top:1px solid var(--bdr);
+  padding:40px 24px;text-align:center;
+}
+.footer-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;
+  margin-bottom:10px;
+}
+.footer-logo .t{color:var(--accent)}.footer-logo .r{color:rgba(255,255,255,.75)}
+.footer p{font-size:13px;color:var(--muted);margin-bottom:4px}
+.footer-links{
+  display:flex;gap:24px;justify-content:center;
+  margin-top:20px;flex-wrap:wrap;
+}
+.footer-links a{font-size:13px;color:var(--muted);transition:color .2s}
+.footer-links a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" aria-label="Navigation principale">
+  <div class="nav-logo">
+    <span class="t">TRINOCLE</span><span class="r"> FILM</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#pourquoi">Pourquoi</a></li>
+    <li><a href="#usages">Cas d'usage</a></li>
+    <li><a href="#processus">Processus</a></li>
+    <li><a href="#roi">ROI</a></li>
+    <li><a href="#podcast">Podcast</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+    Prendre rendez-vous
+  </button>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="accueil" aria-label="Section principale">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-badge" aria-label="Indicateur actif">
+      <div class="hero-badge-dot" aria-hidden="true"></div>
+      Vidéo Interactive B2B · Résultats mesurables
+    </div>
+    <h1 class="hero-title">
+      <span class="line1">La vidéo qui</span>
+      <span class="line2">convertit vraiment</span>
+    </h1>
+    <p class="hero-desc">
+      L'humain est le vecteur numéro 1 de l'achat. TRINOCLE FILM marie humanité et interactivité pour créer des expériences qui convertissent, fidélisent, et restent en mémoire.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+        Découvrir notre approche
+      </button>
+      <button class="btn-ghost" onclick="document.getElementById('podcast').scrollIntoView({behavior:'smooth'})">
+        🎙 Écouter le podcast
+      </button>
+    </div>
+    <div class="hero-stats" aria-label="Chiffres clés">
+      <div class="hero-stat">
+        <div class="sn"><em>8</em> sem.</div>
+        <div class="sl">De la stratégie au live</div>
+      </div>
+      <div class="hero-stat">
+        <div class="sn"><em>10</em> cas</div>
+        <div class="sl">D'usage B2B couverts</div>
+      </div>
+      <div class="hero-stat">
+        <div class="sn"><em>3</em> offres</div>
+        <div class="sl">Adaptées à votre budget</div>
+      </div>
+      <div class="hero-stat">
+        <div class="sn"><em>0</em> fixe</div>
+        <div class="sl">Tarif sur mesure ROI</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- STRIP -->
+<div class="strip" aria-hidden="true">
+  <div class="strip-track">
+    <span class="strip-item">Vidéo Interactive</span>
+    <span class="strip-item">Tunnel de vente</span>
+    <span class="strip-item">Automations CRM</span>
+    <span class="strip-item">Marque Employeur</span>
+    <span class="strip-item">SORA 2 · IA</span>
+    <span class="strip-item">Notion Dashboard</span>
+    <span class="strip-item">8 semaines</span>
+    <span class="strip-item">Retour sur investissement</span>
+    <span class="strip-item">Vidéo Interactive</span>
+    <span class="strip-item">Tunnel de vente</span>
+    <span class="strip-item">Automations CRM</span>
+    <span class="strip-item">Marque Employeur</span>
+    <span class="strip-item">SORA 2 · IA</span>
+    <span class="strip-item">Notion Dashboard</span>
+    <span class="strip-item">8 semaines</span>
+    <span class="strip-item">Retour sur investissement</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="pourquoi" aria-labelledby="feat-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Pourquoi l'interactivité</span>
+      <h2 id="feat-title">Une vidéo, un tunnel de vente complet</h2>
+      <p>La vidéo classique délivre un message. La vidéo interactive guide votre prospect de la découverte à la décision — à son rythme, de façon autonome.</p>
+    </div>
+    <div class="feat-grid">
+      <article class="feat-card">
+        <span class="feat-icon" aria-hidden="true">⚡</span>
+        <h3>Réduction de la friction</h3>
+        <p>Quand un prospect clique, choisit un chemin, interagit dans la vidéo, il devient acteur de l'expérience. Un acteur impliqué est bien plus proche de la décision.</p>
+      </article>
+      <article class="feat-card">
+        <span class="feat-icon" aria-hidden="true">🔮</span>
+        <h3>Embranchements sur mesure</h3>
+        <p>Tarification, témoignages, prise de rendez-vous : chaque bouton est une micro-conversion. Votre prospect arrive à la fin avec bien plus d'éléments de réassurance.</p>
+      </article>
+      <article class="feat-card">
+        <span class="feat-icon" aria-hidden="true">📊</span>
+        <h3>Données actionnables</h3>
+        <p>Tableau de bord Notion livré à l'onboarding : clics par bouton, embranchements empruntés, questions posées. Vous optimisez en continu, sans deviner.</p>
+      </article>
+      <article class="feat-card">
+        <span class="feat-icon" aria-hidden="true">⚙️</span>
+        <h3>Automations intégrées</h3>
+        <p>Formulaire → CRM. Bouton → Calendly. Sans intervention humaine, sans ressaisie. La vidéo travaille pour vous 24h/24, même quand vos équipes dorment.</p>
+      </article>
+      <article class="feat-card">
+        <span class="feat-icon" aria-hidden="true">🎞️</span>
+        <h3>Qualité sur-mesure</h3>
+        <p>De la production épurée à l'élaborée — notre réseau de prestataires est déployable sur tout le territoire. La qualité est toujours corrélée à votre enjeu business.</p>
+      </article>
+      <article class="feat-card">
+        <span class="feat-icon" aria-hidden="true">🤖</span>
+        <h3>Pitch avec SORA 2</h3>
+        <p>On ne pitche pas avec des suppositions. On vous montre le projet avec des vidéos générées par l'IA d'OpenAI, pour que vous validiez avant même le tournage.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="uc-section" id="usages" aria-labelledby="uc-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Cas d'usage</span>
+      <h2 id="uc-title">À qui ça s'adresse, et pourquoi</h2>
+      <p>La vidéo interactive n'est pas un format. C'est une stratégie. Elle s'adapte à vos enjeux précis.</p>
+    </div>
+    <div class="uc-grid">
+      <article class="uc-card">
+        <div class="uc-ico" aria-hidden="true">🎯</div>
+        <div class="uc-title">Recrutement</div>
+        <div class="uc-desc">Hyper-qualifiez vos candidats avant le premier entretien. Construisez une marque employeur qui attire les bons profils.</div>
+      </article>
+      <article class="uc-card">
+        <div class="uc-ico" aria-hidden="true">💼</div>
+        <div class="uc-title">Vente & Acquisition</div>
+        <div class="uc-desc">Intégrez un tunnel de vente dans la vidéo elle-même. La vidéo ne s'arrête plus à la sensibilisation : elle accompagne jusqu'à la conversion.</div>
+      </article>
+      <article class="uc-card">
+        <div class="uc-ico" aria-hidden="true">❤️</div>
+        <div class="uc-title">Fidélisation</div>
+        <div class="uc-desc">Une expérience mémorable crée un lien émotionnel fort avec votre marque. Vos clients parlent de vous, ils reviennent.</div>
+      </article>
+      <article class="uc-card">
+        <div class="uc-ico" aria-hidden="true">📚</div>
+        <div class="uc-title">Formation interne</div>
+        <div class="uc-desc">La vidéo interactive engage, teste, valide les acquis. Outil pédagogique redoutable pour vos équipes.</div>
+      </article>
+      <article class="uc-card">
+        <div class="uc-ico" aria-hidden="true">⏱</div>
+        <div class="uc-title">Gain de temps</div>
+        <div class="uc-desc">Réduisez les tâches non stratégiques. Votre vidéo répond aux FAQ, éduque en asynchrone, lance des automations.</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FUNNEL DEMO -->
+<section id="tunnel" aria-labelledby="funnel-title">
+  <div class="wrap">
+    <div class="funnel-layout">
+      <div class="funnel-text">
+        <span class="eyebrow">Tunnel de vente vidéo</span>
+        <h2 id="funnel-title">Netflix rencontre TikTok Shop</h2>
+        <p>
+          Fluidité de lecture façon Netflix, possibilité d'acheter ou de prendre rendez-vous directement dans la vidéo façon TikTok Shop. Votre prospect navigue à son rythme, dans un parcours pensé pour ses objections et ses besoins.
+        </p>
+        <p>
+          Chaque embranchement est une réponse précise. Chaque bouton, une micro-conversion. Au bout du chemin : un prospect réassuré, prêt à décider.
+        </p>
+        <div class="funnel-pills">
+          <span class="funnel-pill">Tarification</span>
+          <span class="funnel-pill">Témoignages clients</span>
+          <span class="funnel-pill">Prise de RDV</span>
+          <span class="funnel-pill">Accès au formulaire</span>
+          <span class="funnel-pill">En savoir plus</span>
+        </div>
+      </div>
+      <div class="funnel-demo" role="img" aria-label="Démonstration d'une vidéo interactive avec boutons d'embranchement">
+        <div class="demo-screen">
+          <div class="demo-screen-bg" aria-hidden="true"></div>
+          <div class="demo-visual" aria-hidden="true">
+            <div class="demo-ring2"></div>
+            <div class="demo-ring"></div>
+            <div class="demo-avatar">👤</div>
+          </div>
+          <div class="demo-sub" aria-hidden="true">« Quelle est votre priorité aujourd'hui ? »</div>
+          <div class="demo-btns" role="group" aria-label="Boutons interactifs de la démo">
+            <button class="demo-btn active">💡 Voir les prix</button>
+            <button class="demo-btn">💬 Témoignages</button>
+            <button class="demo-btn">📅 Prendre RDV</button>
+          </div>
+          <div class="demo-progress" aria-hidden="true">
+            <div class="demo-prog-fill"></div>
+          </div>
+        </div>
+        <div class="demo-meta" aria-hidden="true">
+          <span class="demo-badge">3 embranchements</span>
+          <span class="demo-badge">Connecté au CRM</span>
+          <span class="demo-badge">Calendly intégré</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOMATIONS -->
+<section class="auto-section" id="automations" aria-labelledby="auto-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">La vraie valeur cachée</span>
+      <h2 id="auto-title">Automations · Zéro friction opérationnelle</h2>
+      <p>On ne produit pas juste une vidéo. On met en place des synchronisations d'applications pour propulser l'expérience client à un tout autre niveau.</p>
+    </div>
+    <div class="auto-grid">
+      <article class="auto-card">
+        <div class="auto-pair">
+          <div class="auto-ico" aria-hidden="true">📋</div>
+          <div class="auto-arrow-ico" aria-hidden="true">→</div>
+          <div class="auto-ico" aria-hidden="true">🗂️</div>
+        </div>
+        <h4>Formulaire → CRM instantané</h4>
+        <p>Le prospect remplit le formulaire dans la vidéo. Il est automatiquement ajouté à votre pipeline de vente. Sans ressaisie, sans délai, sans erreur.</p>
+      </article>
+      <article class="auto-card">
+        <div class="auto-pair">
+          <div class="auto-ico" aria-hidden="true">🔘</div>
+          <div class="auto-arrow-ico" aria-hidden="true">→</div>
+          <div class="auto-ico gold" aria-hidden="true">📅</div>
+        </div>
+        <h4>Bouton → Calendly direct</h4>
+        <p>Un clic dans la vidéo envoie vers votre agenda en quelques secondes. Zéro friction, zéro délai. La prise de rendez-vous se fait pendant le visionnage.</p>
+      </article>
+      <article class="auto-card">
+        <div class="auto-pair">
+          <div class="auto-ico" aria-hidden="true">📊</div>
+          <div class="auto-arrow-ico" aria-hidden="true">→</div>
+          <div class="auto-ico gold" aria-hidden="true">✉️</div>
+        </div>
+        <h4>Insights → Notification équipe</h4>
+        <p>Chaque interaction est tracée. Votre équipe reçoit les données en temps réel : quel bouton, quel chemin, quelle question. Optimisation continue garantie.</p>
+      </article>
+    </div>
+    <div class="notion-callout">
+      <div class="notion-ico" aria-hidden="true">📐</div>
+      <div class="notion-text">
+        <h4>Tableau de bord Notion à l'onboarding</h4>
+        <p>À la livraison, vous recevez automatiquement vos accès Notion. Contacts, performances vidéo, clics par bouton, embranchements empruntés, questions posées dans les quiz. Toutes les données pour décider, pas deviner. On abaisse les barrières, on apporte de la sérénité.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="processus" aria-labelledby="proc-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Comment ça se passe</span>
+      <h2 id="proc-title">8 semaines, de la stratégie au live</h2>
+      <p>Un projet vidéo interactive TRINOCLE FILM suit quatre phases structurées. Vous savez à chaque moment où on en est — et pourquoi.</p>
+    </div>
+    <div class="process-grid" role="list">
+      <div class="proc-step" role="listitem">
+        <div class="proc-num" aria-label="Phase 1">01</div>
+        <div class="proc-weeks">Semaines 1-2</div>
+        <div class="proc-title">Conception &amp; Stratégie</div>
+        <div class="proc-desc">Workshop, analyse IA de votre marché, définition de la stratégie globale. On pose les fondations avant de construire.</div>
+      </div>
+      <div class="proc-step" role="listitem">
+        <div class="proc-num" aria-label="Phase 2">02</div>
+        <div class="proc-weeks">Semaines 3-4</div>
+        <div class="proc-title">Pré-production</div>
+        <div class="proc-desc">Casting finalisé, script validé, tournage planifié dans les moindres détails. Rien n'est laissé au hasard.</div>
+      </div>
+      <div class="proc-step" role="listitem">
+        <div class="proc-num" aria-label="Phase 3">03</div>
+        <div class="proc-weeks">Semaines 5-6</div>
+        <div class="proc-title">Production &amp; Tournage</div>
+        <div class="proc-desc">Approche cinématographique. On capture, on crée. Images pensées pour l'interactivité qui suivra.</div>
+      </div>
+      <div class="proc-step" role="listitem">
+        <div class="proc-num" aria-label="Phase 4">04</div>
+        <div class="proc-weeks">Semaines 7-8</div>
+        <div class="proc-title">Post-prod &amp; Interactivité</div>
+        <div class="proc-desc">Montage, fonctionnalités interactives, automations, connexions CRM/Calendly. Livraison opérationnelle avec dashboard Notion.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="roi-section" id="roi" aria-labelledby="roi-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Retour sur investissement</span>
+      <h2 id="roi-title">Ce qui rentre dans votre poche</h2>
+      <p>Un projet vidéo interactive bien pensé génère deux types de retours — factuel et émotionnel. Les deux comptent dans votre chiffre d'affaires.</p>
+    </div>
+    <div class="roi-grid">
+      <article class="roi-block lit">
+        <span class="eyebrow">ROI Factuel</span>
+        <h3>Ce que vous pouvez calculer</h3>
+        <div class="roi-fig">
+          <div class="label">Exemple concret</div>
+          <div class="val">+30%</div>
+          <div class="sub">de conversions récupérées sur un panier moyen de 300 € par client — une fuite mensuelle en dizaines de milliers d'euros colmatée.</div>
+        </div>
+        <ul class="roi-list">
+          <li>Augmentation mesurable du taux de conversion</li>
+          <li>Réduction du cycle de vente : décision plus rapide</li>
+          <li>Pipeline de vente alimenté automatiquement</li>
+          <li>Moins d'abandons en cours de parcours d'achat</li>
+        </ul>
+      </article>
+      <article class="roi-block">
+        <span class="eyebrow">ROI Émotionnel</span>
+        <h3>Ce qui est souvent encore plus puissant</h3>
+        <ul class="roi-list" style="margin-top:32px">
+          <li><strong>Gain de temps</strong> — les automations font le travail à votre place, vous récupérez des heures chaque semaine</li>
+          <li><strong>Productivité équipe</strong> — moins de tâches répétitives, plus d'énergie pour les missions à haute valeur ajoutée</li>
+          <li><strong>Cycles réduits</strong> — un prospect mieux accompagné prend sa décision plus vite</li>
+          <li><strong>Valeur perçue</strong> — une marque innovante, sérieuse, à la pointe. Votre positionnement monte</li>
+          <li><strong>Marque employeur</strong> — hyper-qualifiez vos candidats avant même le premier entretien</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PITCH / SORA -->
+<section class="pitch-section" id="approche" aria-labelledby="pitch-title">
+  <div class="wrap">
+    <div class="pitch-inner">
+      <div class="pitch-tag" aria-label="Badge technologie">
+        <span>🤖 SORA 2 · Intelligence Artificielle · OpenAI</span>
+      </div>
+      <h2 id="pitch-title">On vous montre avant de tourner</h2>
+      <p>
+        Chez TRINOCLE FILM, on ne pitche pas avec des suppositions. On vous présente le projet avec des vidéos générées par SORA 2, l'IA d'OpenAI — pour que vous validiez la vision avant même que le premier euro soit dépensé en tournage.
+      </p>
+      <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+        Voir comment on travaille
+      </button>
+      <div class="pitch-cards">
+        <article class="pitch-card">
+          <div class="ico" aria-hidden="true">🎬</div>
+          <h4>Démo IA avant production</h4>
+          <p>Mise en scène, ambiances, univers visuel — vous voyez le résultat avant de valider. Moins de doutes, plus de confiance dans ce que vous commandez.</p>
+        </article>
+        <article class="pitch-card">
+          <div class="ico" aria-hidden="true">🔍</div>
+          <h4>Analyse IA de votre marché</h4>
+          <p>On utilise l'IA pour analyser votre entreprise, vos concurrents, vos enjeux avant chaque rendez-vous. On arrive préparés. Ça se ressent.</p>
+        </article>
+        <article class="pitch-card">
+          <div class="ico" aria-hidden="true">💡</div>
+          <h4>3 propositions dans votre budget</h4>
+          <p>On vous demande votre fourchette, on vous fait trois offres dedans. On ne fait pas du «juste pour communiquer». On fait du stratégique, du durable, du rentable.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact" aria-labelledby="cta-title">
+  <div class="cta-orb1" aria-hidden="true"></div>
+  <div class="cta-orb2" aria-hidden="true"></div>
+  <div class="cta-inner">
+    <h2 id="cta-title">Identifions vos fuites ensemble</h2>
+    <p>
+      On analysera votre situation, on identifiera où vous perdez des conversions, et on construira une proposition adaptée à votre budget et à vos ambitions.
+    </p>
+    <a class="btn-primary" href="mailto:contact@trinoclefilm.com" style="display:inline-block">
+      Prendre rendez-vous →
+    </a>
+    <p class="cta-note">Rendez-vous découverte · Sans engagement · En visio ou en présentiel</p>
+  </div>
+</section>
+
+<!-- PODCAST -->
+<section class="pod-section" id="podcast" aria-labelledby="pod-title">
+  <div class="pod-wrap">
+    <div class="pod-intro">
+      <span class="eyebrow">VideoCast TRINOCLE FILM</span>
+      <h2 id="pod-title">Tout comprendre en 18 minutes</h2>
+      <p>Ce podcast audio couvre les 10 points essentiels de la vidéo interactive B2B — en français, par les créateurs de la méthode.</p>
+    </div>
+
+    <!-- Podcast Header -->
+    <div class="pod-header">
+      <div class="pod-logo">
+        <span class="a">VIDEO</span><span class="b">Cast</span>
+        <span style="font-size:13px;font-weight:400;color:rgba(255,255,255,.55);margin-left:10px">par TRINOCLE FILM</span>
+      </div>
+      <div class="pod-tagline">La vidéo interactive B2B · Ce que c'est, comment ça marche, ce que ça rapporte</div>
+      <div class="pod-meta">
+        <span class="pod-meta-item">🎙 10 chapitres</span>
+        <span class="pod-meta-item">⏱ ~18 minutes</span>
+        <span class="pod-meta-item">🎯 B2B · Décideurs</span>
+      </div>
+      <div class="waveform" id="waveform" aria-hidden="true"></div>
+    </div>
+
+    <!-- Player -->
+    <div class="pod-player">
+      <div class="now-playing">
+        <div class="np-dot" id="npDot" aria-hidden="true"></div>
+        <div>
+          <div class="np-label">En cours de lecture</div>
+          <div class="np-title" id="nowPlayingTitle">Appuie sur Play pour démarrer</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track" id="progressTrack" onclick="seekTo(event)" role="slider" aria-label="Position de lecture" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-thumb" id="progressThumb" aria-hidden="true"></div>
+        </div>
+        <div class="time-row">
+          <span id="timeElapsed">0:00</span>
+          <span id="timeTotal">~18:00</span>
+        </div>
+      </div>
+      <div class="controls" role="group" aria-label="Contrôles de lecture">
+        <button class="ctrl-btn" onclick="prevChapter()" aria-label="Chapitre précédent" title="Chapitre précédent">⏮</button>
+        <button class="ctrl-btn" onclick="rewind()" aria-label="Reculer 15 secondes" title="Reculer 15s">
+          ↩<span class="ctrl-label">15s</span>
+        </button>
+        <button class="play-btn" id="playBtn" onclick="togglePlay()" aria-label="Lecture/Pause">▶</button>
+        <button class="ctrl-btn" onclick="fastForward()" aria-label="Avancer 15 secondes" title="Avancer 15s">
+          <span class="ctrl-label">15s</span>↪
+        </button>
+        <button class="ctrl-btn" onclick="nextChapter()" aria-label="Chapitre suivant" title="Chapitre suivant">⏭</button>
+      </div>
+      <div class="options-row">
+        <div class="option-group">
+          <div class="option-label">Vitesse de lecture</div>
+          <div class="pills" id="speedPills" role="group" aria-label="Vitesse">
+            <span class="pill" onclick="setSpeed(0.8,this)" tabindex="0">0.8×</span>
+            <span class="pill active" onclick="setSpeed(1,this)" tabindex="0">1×</span>
+            <span class="pill" onclick="setSpeed(1.25,this)" tabindex="0">1.25×</span>
+            <span class="pill" onclick="setSpeed(1.5,this)" tabindex="0">1.5×</span>
+            <span class="pill" onclick="setSpeed(1.75,this)" tabindex="0">1.75×</span>
+          </div>
+        </div>
+        <div class="option-group">
+          <div class="option-label">Voix</div>
+          <select id="voiceSelect" onchange="changeVoice()" aria-label="Sélection de la voix">
+            <option value="">Chargement des voix…</option>
+          </select>
+        </div>
+      </div>
+      <div class="status-bar" id="statusBar" role="status" aria-live="polite">Prêt · Web Speech API · Chrome ou Edge recommandé</div>
+    </div>
+
+    <!-- Chapters -->
+    <div class="chapters-card">
+      <div class="chapters-hdr">
+        <h3>📋 Chapitres</h3>
+        <span class="ch-count" id="chCount" aria-live="polite">0 / 10</span>
+      </div>
+      <div id="chaptersList" role="list"></div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="transcript-card">
+      <h3>📜 Transcription <span style="font-size:12px;color:var(--muted);font-weight:400">— chapitre en cours</span></h3>
+      <div class="transcript-body" id="transcriptBody" aria-live="polite">
+        Lance la lecture pour voir la transcription s'afficher ici.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">
+    <span class="t">TRINOCLE</span><span class="r"> FILM</span>
+  </div>
+  <p>Agence de production vidéo interactive B2B</p>
+  <p>La vidéo qui convertit vraiment.</p>
+  <nav class="footer-links" aria-label="Liens du pied de page">
+    <a href="#accueil">Accueil</a>
+    <a href="#pourquoi">Pourquoi</a>
+    <a href="#usages">Cas d'usage</a>
+    <a href="#processus">Processus</a>
+    <a href="#roi">ROI</a>
+    <a href="#podcast">Podcast</a>
+    <a href="mailto:contact@trinoclefilm.com">Contact</a>
+  </nav>
+</footer>
+
+<script>
+// ────────────────────────────────────────────────
+// DEMO BUTTON INTERACTION
+// ────────────────────────────────────────────────
+document.querySelectorAll('.demo-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ────────────────────────────────────────────────
+// PODCAST DATA
+// ────────────────────────────────────────────────
+const chapters = [
+  {
+    title: "Introduction : pourquoi la vidéo change tout",
+    icon: "🎬", desc: "Le vecteur numéro 1 de l'achat, c'est l'humain", dur: "~1:45",
+    text: `Bienvenue dans ce podcast de TRINOCLE FILM. Aujourd'hui, on va parler d'un sujet qui touche directement à votre chiffre d'affaires : la vidéo interactive. Mais avant d'aller plus loin, posons une vérité de fond.
+
+L'humain, c'est le vecteur numéro un de l'achat. Dans 100 pourcent des cas, lorsqu'on travaille l'expérience humaine dans une communication, on obtient un avantage concurrentiel réel. Pas une impression, pas une intuition. Un avantage mesurable.
+
+Et la vidéo, c'est aujourd'hui le format le plus puissant pour humaniser une marque, un service ou un produit. Ce que nous faisons chez TRINOCLE FILM, c'est aller encore plus loin : on ajoute l'interactivité. Et ce mariage entre l'humain et l'interactif, c'est ce qui permet de créer des expériences qui convertissent, qui fidélisent, et qui font que vos prospects se souviennent de vous bien après le visionnage.
+
+Dans ce podcast, on va explorer ensemble comment ça fonctionne, à qui ça s'adresse, combien ça rapporte, et comment se passe concrètement un projet vidéo interactive avec TRINOCLE FILM. Installe-toi confortablement, et c'est parti.`
+  },
+  {
+    title: "Le pouvoir de l'interactivité",
+    icon: "⚡", desc: "Comment l'interactivité réduit la friction et booste la conversion", dur: "~2:00",
+    text: `Passons maintenant au cœur du sujet : pourquoi l'interactivité change tout.
+
+Une vidéo classique, c'est un message livré. Point. Le spectateur regarde, parfois il retient, souvent il oublie. Et dans la grande majorité des cas, il ne passe pas à l'action immédiatement.
+
+Avec la vidéo interactive, on change complètement cette dynamique. L'interactivité, c'est la capacité à proposer au spectateur de prolonger son expérience, de faire un choix, de s'engager. Et cet engagement, il est central, parce qu'il réduit la friction à l'achat ou à la conversion.
+
+Quand quelqu'un clique, quand il choisit un chemin, quand il interagit avec un bouton dans une vidéo, il devient acteur de l'expérience. Et un acteur impliqué, c'est un prospect beaucoup plus proche de la décision.
+
+Concrètement, l'interactivité permet d'augmenter le taux de conversion, de créer une expérience mémorable et novatrice, d'accompagner le prospect dans sa prise de décision, et de réduire significativement les cycles de vente.`
+  },
+  {
+    title: "À quoi sert la vidéo interactive ?",
+    icon: "🎯", desc: "Recrutement, ventes, fidélisation, acquisition et bien plus", dur: "~1:50",
+    text: `Voyons ensuite les cas d'usage concrets. À quoi peut servir une vidéo interactive dans votre entreprise ?
+
+Premier cas d'usage : le recrutement. Une vidéo interactive permet de présenter votre culture d'entreprise, de qualifier vos candidats en amont, et de créer une marque employeur qui attire vraiment les profils que vous cherchez. On appelle ça l'hyper-qualification des candidats.
+
+Deuxième cas d'usage : la vente et l'acquisition. En intégrant des mécaniques de tunnel de vente dans la vidéo elle-même, on pense le marketing différemment. La vidéo ne s'arrête plus à la sensibilisation, elle accompagne jusqu'à la conversion.
+
+Troisième cas d'usage : la fidélisation client. Une expérience vidéo personnalisée, mémorable, crée un lien émotionnel fort avec votre marque. Vos clients se souviennent de vous, ils parlent de vous, ils reviennent.
+
+Quatrième cas d'usage : la formation et l'entraînement des employés. Une vidéo interactive est un outil pédagogique redoutable. Elle engage, elle teste, elle valide les acquis.
+
+Et enfin, cinquième cas d'usage : la réduction du temps passé sur des tâches non stratégiques. Quand votre vidéo répond aux questions fréquentes, éduque vos prospects en mode asynchrone, et lance des automations depuis l'intérieur même du contenu, vous libérez du temps précieux pour vous et vos équipes.`
+  },
+  {
+    title: "La vidéo comme tunnel de vente",
+    icon: "🔮", desc: "Penser sa vidéo comme un funnel, pas comme un contenu", dur: "~1:50",
+    text: `Ce point est crucial. La vidéo interactive permet de penser votre marketing comme un vrai tunnel de vente.
+
+Une vidéo simple délivre un message. Une vidéo interactive, elle, guide votre prospect depuis la découverte jusqu'à la décision, en s'adaptant à son profil, à ses besoins, à ses objections.
+
+Imaginez : votre prospect commence à regarder votre vidéo. À un moment, il choisit le chemin qui lui correspond. S'il est plutôt intéressé par la tarification, il clique sur le bouton correspondant. S'il veut voir des témoignages clients, il va dans cette direction. S'il est prêt à prendre rendez-vous, un bouton l'emmène directement sur votre calendrier en ligne.
+
+C'est le principe des embranchements interactifs. Chaque chemin est pensé pour répondre à une attente précise. Chaque bouton est une micro-conversion. Et au bout du compte, votre prospect arrive à la fin de l'expérience avec beaucoup plus d'éléments de réassurance qu'après une simple vidéo linéaire.
+
+On s'inspire ici de deux logiques complémentaires : d'un côté Netflix, avec des contenus qui s'enchaînent avec fluidité et continuité ; de l'autre TikTok Shop, avec la possibilité d'acheter directement depuis la vidéo via des boutons d'achat intégrés pendant le visionnage. Le tout, pensé pour votre audience spécifique.`
+  },
+  {
+    title: "Les automations : la vraie valeur cachée",
+    icon: "⚙️", desc: "Synchronisations d'applications et gain de temps opérationnel", dur: "~2:00",
+    text: `Passons maintenant à ce qui est, selon nous, la vraie valeur cachée de la vidéo interactive : les automations.
+
+Dans notre service, on ne se contente pas de produire une vidéo. On met en place des synchronisations d'applications pour propulser l'expérience client à un tout autre niveau.
+
+Un exemple concret. Votre prospect regarde la vidéo. Il clique sur le bouton "Accéder au formulaire". Une fois le formulaire rempli, il est automatiquement ajouté dans votre CRM ou dans votre pipeline de vente. Sans intervention humaine. Sans ressaisie manuelle. Immédiatement.
+
+Un autre exemple. Votre prospect clique sur "Prendre rendez-vous". Il arrive directement sur votre Calendly, sans friction, sans délai. La prise de rendez-vous se fait en quelques secondes.
+
+Tout ça, c'est du temps gagné pour vous. C'est moins d'erreurs. C'est moins de tâches administratives répétitives. Et surtout, c'est une expérience client bien plus fluide et professionnelle.
+
+À l'onboarding, vous recevez automatiquement vos accès Notion sous forme de lien. Vous y retrouvez vos contacts avec leur nom et leur adresse email, vos insights de performance vidéo comme le nombre de clics sur chaque bouton, les embranchements empruntés par vos prospects, les questions posées lors des quiz intégrés dans l'expérience.`
+  },
+  {
+    title: "La qualité sur-mesure selon votre projet",
+    icon: "🎞️", desc: "Du plus stratégique au plus élaboré, selon votre budget et vos enjeux", dur: "~1:30",
+    text: `Voyons ensuite comment TRINOCLE FILM adapte la qualité de rendu à votre projet.
+
+Grâce à notre réseau de prestataires, déployable partout sur le territoire, nous pouvons proposer n'importe quelle qualité de production. Du rendu le plus épuré et stratégique jusqu'au contenu le plus élaboré, directement corrélé aux enjeux du projet.
+
+Vous n'avez pas besoin de produire une vidéo à 50 000 euros si votre problématique peut être résolue avec un format plus simple. Et inversement, si l'enjeu est de réduire votre friction d'achat, d'éduquer vos prospects en profondeur et de déployer des automations, alors on va construire quelque chose de plus ambitieux.
+
+On travaille aussi beaucoup le contenu vlog, qui est un excellent moyen de créer du capital sympathie avec votre audience. Quand vos prospects vous voient, vous entendent, vous trouvent humains et accessibles, ils achètent plus facilement. C'est aussi simple que ça.
+
+Chaque projet est pensé sur mesure. La qualité n'est jamais un hasard, elle est toujours en rapport direct avec l'objectif business qu'on cherche à atteindre avec vous.`
+  },
+  {
+    title: "Le pitch avec des démos IA",
+    icon: "🤖", desc: "On pitche le projet avec SORA 2, pas des hypothèses", dur: "~1:30",
+    text: `Retenons bien ceci : chez TRINOCLE FILM, on ne pitche pas avec des suppositions.
+
+Quand on vous présente un projet vidéo, on ne se contente pas de vous dire "imaginez un résultat comme ça". On vous montre le projet avec des vidéos d'intelligence artificielle, grâce à SORA 2, le générateur de vidéos d'OpenAI.
+
+Pourquoi ? Parce que montrer, c'est bien plus puissant que décrire. Une démo concrète permet de minimiser vos doutes, d'établir une vision claire du rendu final, et de vous projeter dans le projet de manière intuitive.
+
+Vous pouvez voir les intentions de mise en scène, les ambiances, les personnages, l'univers visuel. Vous pouvez réagir, ajuster, valider. Et vous pouvez avoir confiance dans ce que vous commandez, parce que vous l'avez déjà vu.
+
+On utilise aussi l'intelligence artificielle pour analyser votre entreprise avant les appels de prospection ou les rendez-vous. Cela nous permet d'avoir des données beaucoup plus pertinentes sur votre secteur, vos concurrents, vos enjeux. Nous arrivons préparés.`
+  },
+  {
+    title: "Comment se passe un projet ?",
+    icon: "📅", desc: "8 semaines, de la stratégie à la mise en ligne", dur: "~1:45",
+    text: `Passons maintenant aux coulisses d'un projet TRINOCLE FILM. Comment ça se passe concrètement ?
+
+Un projet complet se déroule sur 8 semaines, réparties en quatre phases.
+
+La première phase, semaines 1 et 2, c'est la Conception et la Stratégie. On mène un workshop avec vous, on utilise l'intelligence artificielle pour analyser votre marché et vos enjeux, et on définit la stratégie globale de la vidéo. C'est la phase la plus importante : on pose les fondations.
+
+La deuxième phase, semaines 3 et 4, c'est la Pré-production. On finalise le casting, on valide le script définitif, on planifie le tournage. Tout est préparé dans les moindres détails.
+
+La troisième phase, semaines 5 et 6, c'est la Production et le Tournage. On capture les images avec une approche cinématographique. On tourne. On crée.
+
+La quatrième et dernière phase, semaines 7 et 8, c'est la Post-production et l'Interactivité. On monte, on développe les fonctionnalités interactives, on intègre les automations, on configure les connexions avec vos outils existants.
+
+À la livraison, vous avez une vidéo interactive opérationnelle, connectée à votre CRM, à votre calendrier, à votre pipeline de vente.`
+  },
+  {
+    title: "La question du budget",
+    icon: "💡", desc: "Aucun prix fixe, mais une logique de retour sur investissement", dur: "~2:00",
+    text: `Abordons maintenant la question que tout le monde se pose : quel est le prix ?
+
+Chez TRINOCLE FILM, on ne fonctionne pas avec une grille tarifaire fixe. Et il y a une raison simple à ça : un projet vidéo peut varier considérablement en fonction de la problématique qu'on cherche à résoudre avec vous.
+
+Si la problématique, c'est de faire un peu de promotion pour un restaurant local, le budget sera naturellement plus modeste. Si la problématique, c'est d'augmenter votre taux de conversion, de réduire la friction à l'achat, d'éduquer vos prospects et de déployer des automations complètes, alors l'investissement sera plus conséquent, mais le retour sur investissement le sera aussi.
+
+Voici comment on procède : on vous demande votre fourchette de prix, et on vous fait trois propositions dans cette fourchette. On respecte votre budget et on adapte nos moyens de production en conséquence.
+
+On ne peut pas vous chiffrer un projet sans avoir au préalable fait un rendez-vous et bien cerné la problématique. Nous ne sommes pas les moins chers du marché. Mais nous ne sommes pas les plus chers non plus. Nous sommes ceux qui font en sorte que votre investissement rapporte.`
+  },
+  {
+    title: "Les retours sur investissement : factuels et émotionnels",
+    icon: "📈", desc: "Ce qui rentre dans votre poche, et ce qui vous coûte invisiblement", dur: "~2:30",
+    text: `Terminons ce podcast avec ce qui compte vraiment : les retours sur investissement.
+
+Un projet vidéo interactive bien pensé génère deux types de retours sur investissement.
+
+Le premier, c'est le retour sur investissement factuel. Vous pouvez le calculer directement. Exemple : votre panier moyen par client est de 300 euros. Vous perdez actuellement 30 pourcent de conversions parce que vous n'optimisez pas le parcours d'achat. Sur un mois à bonne activité, cette fuite peut se chiffrer en dizaines de milliers d'euros. La question qu'on vous pose est simple : est-ce que pour un investissement nettement plus faible, vous souhaitez continuer à avoir ces fuites ?
+
+Le deuxième type de retour sur investissement, c'est ce qu'on appelle le retour émotionnel.
+
+Premier retour émotionnel : le gain de temps. Quand vos automations font le travail à votre place, vous récupérez des heures chaque semaine.
+
+Deuxième retour émotionnel : le gain de productivité de vos équipes.
+
+Troisième retour émotionnel : la réduction des cycles de vente.
+
+Quatrième retour émotionnel : la confiance créée auprès de votre cœur de cible. Une marque qui propose une expérience vidéo interactive est perçue comme innovante, sérieuse, à la pointe.
+
+Et enfin, cinquième retour émotionnel : la marque employeur.
+
+Voilà ce que propose TRINOCLE FILM. La prochaine étape, c'est un rendez-vous avec nous. À très bientôt.`
+  }
+];
+
+const keywords = [
+  'vidéo interactive','TRINOCLE FILM','retour sur investissement','interactivité',
+  'automations','conversion','tunnel de vente','embranchements','SORA 2',
+  'intelligence artificielle','pipeline de vente','Notion','CRM','cycle de vente',
+  'taux de conversion','marque employeur','friction','onboarding'
+];
+
+// ────────────────────────────────────────────────
+// STATE
+// ────────────────────────────────────────────────
+const synth = window.speechSynthesis;
+let currentChapter = 0, isPlaying = false, speed = 1;
+let selectedVoice = null, elapsedSeconds = 0, timerInterval = null;
+const totalChars = chapters.reduce((s, c) => s + c.text.length, 0);
+
+// ────────────────────────────────────────────────
+// WAVEFORM
+// ────────────────────────────────────────────────
+const heights = [14,22,36,28,18,32,24,38,16,30,26,34,20,28,14,36,22,32,18,28,34,16,26,38,20,30,24,36,18,28,14,32,26,20,34,16,28,22,36,30];
+const wfEl = document.getElementById('waveform');
+heights.forEach((h, i) => {
+  const bar = document.createElement('div');
+  bar.className = 'wave-bar';
+  bar.style.setProperty('--h', h + 'px');
+  bar.style.setProperty('--dur', (0.45 + (i % 7) * 0.06).toFixed(2) + 's');
+  wfEl.appendChild(bar);
+});
+
+// ────────────────────────────────────────────────
+// CHAPTERS LIST
+// ────────────────────────────────────────────────
+function buildChaptersList() {
+  const container = document.getElementById('chaptersList');
+  container.innerHTML = '';
+  chapters.forEach((ch, i) => {
+    const el = document.createElement('div');
+    el.className = 'chapter-item' + (i === currentChapter ? ' active' : '');
+    el.setAttribute('role', 'listitem');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', `Chapitre ${i+1}: ${ch.title}`);
+    el.innerHTML = `
+      <span class="ch-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="ch-ico" aria-hidden="true">${ch.icon}</span>
+      <div class="ch-info">
+        <div class="ch-title">${ch.title}</div>
+        <div class="ch-desc">${ch.desc}</div>
+      </div>
+      <span class="ch-dur">${ch.dur}</span>
+    `;
+    el.onclick = () => jumpToChapter(i);
+    el.onkeydown = e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();jumpToChapter(i);} };
+    container.appendChild(el);
+  });
+  document.getElementById('chCount').textContent = `${currentChapter + 1} / ${chapters.length}`;
+}
+
+// ────────────────────────────────────────────────
+// TRANSCRIPT
+// ────────────────────────────────────────────────
+function updateTranscript(i) {
+  const body = document.getElementById('transcriptBody');
+  let text = chapters[i].text;
+  keywords.forEach(kw => {
+    const re = new RegExp(`(${kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    text = text.replace(re, '<span class="kw">$1</span>');
+  });
+  body.innerHTML = text.split('\n\n').map(p => `<p style="margin-bottom:12px">${p}</p>`).join('');
+}
+
+// ────────────────────────────────────────────────
+// VOICES
+// ────────────────────────────────────────────────
+function loadVoices() {
+  const voices = synth.getVoices();
+  const sel = document.getElementById('voiceSelect');
+  const frVoices = voices.filter(v => v.lang.startsWith('fr'));
+  const pool = frVoices.length ? frVoices : voices.slice(0, 6);
+  if (!pool.length) return;
+  sel.innerHTML = pool.map((v, i) => `<option value="${i}">${v.name} (${v.lang})</option>`).join('');
+  selectedVoice = pool[0];
+  sel._pool = pool;
+}
+synth.onvoiceschanged = loadVoices;
+loadVoices();
+setTimeout(loadVoices, 500);
+setTimeout(loadVoices, 1500);
+
+function changeVoice() {
+  const sel = document.getElementById('voiceSelect');
+  const pool = sel._pool;
+  if (!pool) return;
+  selectedVoice = pool[parseInt(sel.value)] || null;
+  if (isPlaying) { stopAll(); speak(); }
+}
+
+// ────────────────────────────────────────────────
+// SPEECH
+// ────────────────────────────────────────────────
+function speak() {
+  synth.cancel();
+  const ch = chapters[currentChapter];
+  const utter = new SpeechSynthesisUtterance(ch.text);
+  utter.rate = speed;
+  utter.pitch = 1.05;
+  utter.lang = 'fr-FR';
+  if (selectedVoice) utter.voice = selectedVoice;
+  utter.onstart = () => { isPlaying = true; startTimer(); updateUI(); setStatus(`▶ Chapitre ${currentChapter + 1} en lecture…`); };
+  utter.onend = () => {
+    if (currentChapter < chapters.length - 1) {
+      currentChapter++;
+      updateChapterUI();
+      speak();
+    } else {
+      isPlaying = false; stopTimer(); updateUI();
+      setStatus('✅ Podcast terminé — Merci d\'avoir écouté TRINOCLE FILM !');
+    }
+  };
+  utter.onerror = (e) => {
+    isPlaying = false; stopTimer(); updateUI();
+    setStatus('⚠️ Erreur : ' + e.error + ' — Essaie Chrome ou Edge');
+  };
+  synth.speak(utter);
+}
+
+// ────────────────────────────────────────────────
+// CONTROLS
+// ────────────────────────────────────────────────
+function togglePlay() {
+  if (isPlaying) {
+    synth.pause(); isPlaying = false; stopTimer(); updateUI(); setStatus('⏸ En pause');
+  } else {
+    if (synth.paused) {
+      synth.resume(); isPlaying = true; startTimer(); updateUI();
+      setStatus(`▶ Chapitre ${currentChapter + 1} en lecture…`);
+    } else { speak(); }
+  }
+}
+function stopAll() { synth.cancel(); isPlaying = false; stopTimer(); updateUI(); }
+function nextChapter() {
+  if (currentChapter < chapters.length - 1) {
+    currentChapter++;
+    updateChapterUI();
+    if (isPlaying || synth.speaking) speak();
+    else { stopTimer(); updateUI(); setStatus(`Chapitre ${currentChapter + 1} sélectionné`); }
+  }
+}
+function prevChapter() {
+  if (currentChapter > 0) {
+    currentChapter--;
+    updateChapterUI();
+    if (isPlaying || synth.speaking) speak();
+    else { stopTimer(); updateUI(); setStatus(`Chapitre ${currentChapter + 1} sélectionné`); }
+  }
+}
+function jumpToChapter(i) {
+  currentChapter = i; updateChapterUI();
+  if (isPlaying || synth.speaking) { stopAll(); speak(); }
+  else { updateUI(); setStatus(`Chapitre ${i + 1} sélectionné — Appuie sur Play`); }
+}
+function rewind() {
+  elapsedSeconds = Math.max(0, elapsedSeconds - 15);
+  updateProgress();
+  if (isPlaying || synth.speaking) { stopAll(); speak(); }
+}
+function fastForward() { nextChapter(); }
+function setSpeed(s, btn) {
+  speed = s;
+  document.querySelectorAll('#speedPills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  if (isPlaying) { stopAll(); speak(); }
+}
+function seekTo(event) {
+  const track = document.getElementById('progressTrack');
+  const rect = track.getBoundingClientRect();
+  const pct = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+  const targetChar = Math.floor(pct * totalChars);
+  let cumChars = 0;
+  for (let i = 0; i < chapters.length; i++) {
+    if (cumChars + chapters[i].text.length >= targetChar) { currentChapter = i; break; }
+    cumChars += chapters[i].text.length;
+  }
+  elapsedSeconds = Math.floor(pct * 18 * 60);
+  updateChapterUI();
+  if (isPlaying || synth.speaking) { stopAll(); speak(); }
+  updateProgress();
+}
+
+// ────────────────────────────────────────────────
+// TIMER & PROGRESS
+// ────────────────────────────────────────────────
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => { elapsedSeconds++; updateProgress(); }, 1000);
+}
+function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
+function updateProgress() {
+  const totalSecs = 18 * 60;
+  const pct = Math.min(100, (elapsedSeconds / totalSecs) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressThumb').style.left = pct + '%';
+  document.getElementById('timeElapsed').textContent = formatTime(elapsedSeconds);
+  document.getElementById('progressTrack').setAttribute('aria-valuenow', Math.round(pct));
+}
+function formatTime(s) {
+  return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+// ────────────────────────────────────────────────
+// UI UPDATES
+// ────────────────────────────────────────────────
+function updateUI() {
+  const btn = document.getElementById('playBtn');
+  const dot = document.getElementById('npDot');
+  btn.textContent = isPlaying ? '⏸' : '▶';
+  btn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Lecture');
+  dot.classList.toggle('active', isPlaying);
+  document.getElementById('waveform').classList.toggle('playing', isPlaying);
+}
+function updateChapterUI() {
+  const ch = chapters[currentChapter];
+  document.getElementById('nowPlayingTitle').textContent = `${String(currentChapter+1).padStart(2,'0')}. ${ch.title}`;
+  document.getElementById('chCount').textContent = `${currentChapter + 1} / ${chapters.length}`;
+  document.querySelectorAll('.chapter-item').forEach((el, i) => el.classList.toggle('active', i === currentChapter));
+  updateTranscript(currentChapter);
+  const items = document.querySelectorAll('.chapter-item');
+  if (items[currentChapter]) items[currentChapter].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  updateUI();
+}
+function setStatus(msg) { document.getElementById('statusBar').textContent = msg; }
+
+// ────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────
+buildChaptersList();
+updateTranscript(0);
+document.getElementById('nowPlayingTitle').textContent = `01. ${chapters[0].title}`;
+
+// Smooth active nav link highlight on scroll
+const sections = document.querySelectorAll('section[id], header[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => {
+        link.style.color = link.getAttribute('href') === '#' + entry.target.id ? 'var(--text)' : '';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
