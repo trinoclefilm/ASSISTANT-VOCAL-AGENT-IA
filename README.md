@@ -1,8 +1,8 @@
 # Assistant vocal Trinocle Film
 
-Un agent vocal en français qui répond aux questions sur les vidéos interactives de Trinocle Film. Il tourne sur Cloudflare Workers, sans abonnement, et s'intègre par-dessus une vidéo.
+Un agent vocal qui répond aux questions sur les vidéos interactives de Trinocle Film, en français, en anglais ou en chinois. Il tourne sur Cloudflare Workers, sans abonnement, et s'intègre par-dessus une vidéo.
 
-La personne parle, Whisper transcrit, Mistral répond à partir de `src/connaissances.js`, MeloTTS lit la réponse phrase par phrase. Rien n'est stocké.
+La personne parle, Whisper transcrit et reconnaît la langue, Mistral répond dans cette langue à partir de `src/connaissances.js`, MeloTTS lit la réponse phrase par phrase. Rien n'est stocké.
 
 ## Mettre en ligne depuis un téléphone
 
@@ -26,10 +26,22 @@ Ce dépôt est public. N'y écris rien de confidentiel.
 | Adresse | Rôle |
 | --- | --- |
 | `/` | L'assistant |
-| `/test.html` | Écouter la voix française, tester la transcription |
-| `/?mesures` | Conversation avec le temps de réponse affiché |
+| `/test.html` | Vérifier les modèles, écouter les voix française, anglaise et chinoise, tester la transcription |
+| `/?mesures` | Conversation avec le temps de réponse, la langue reconnue et la consommation de chaque échange |
 | `/?voix=navigateur` | Conversation avec la voix du téléphone au lieu de MeloTTS |
 | `/?integre` | Version compacte pour un cadre par-dessus une vidéo |
+
+## Langues
+
+Whisper reconnaît seul la langue parlée. L'agent répond et parle dans cette langue, et la retient pour la suite de la conversation. Si Whisper hésite (moins de 50 % de certitude, par exemple un fort accent), l'agent garde la langue de la conversation et refait la transcription dans cette langue. Une question écrite est classée d'après ses mots.
+
+| Langue | Comprise | Réponse | Voix Cloudflare | Voix du téléphone |
+| --- | --- | --- | --- | --- |
+| Français | oui | oui | oui | `fr-FR` |
+| Anglais | oui | oui | oui | `en-US` |
+| Chinois mandarin | oui | oui, en caractères simplifiés | à vérifier avec `/test.html` | `zh-CN` |
+
+Si Cloudflare refuse une voix, la phrase est lue par la voix du téléphone. Restent en français : l'introduction, les boutons et les cartes (prix, déroulé, exemples). Pour ajouter une langue, voir `LANGUES` dans [`src/voix.js`](src/voix.js) (MeloTTS sait aussi dire l'espagnol, le japonais et le coréen).
 
 ## Intégrer dans une vidéo
 
@@ -46,6 +58,7 @@ Pour que la vidéo réagisse, la page qui contient le cadre écoute ce que dit l
 window.addEventListener("message", (e) => {
   if (e.data?.source !== "trinocle-voix") return;
   // e.data.type : "etat" | "transcription" | "intention" | "reponse"
+  // e.data.langue : "fr" | "en" | "zh" (avec "transcription")
   // e.data.intention : "prix" | "rdv" | "exemples" | "deroule" | "garantie" | "automation" | "histoire"
   // e.data.texte : ce que la personne a dit, ou ce que l'assistant a répondu
   if (e.data.intention === "exemples") lecteur.allerAuChapitre("exemples");
@@ -54,17 +67,25 @@ window.addEventListener("message", (e) => {
 
 `lecteur.allerAuChapitre` est un exemple : remplace-le par la commande de ton lecteur vidéo.
 
-## Modèles et coût
+## Ce que consomme une réponse
 
-Prix relevés sur [la grille Workers AI](https://developers.cloudflare.com/workers-ai/platform/pricing/) en novembre 2026. Le plan gratuit donne 10 000 neurones par jour, puis refuse les demandes sans rien facturer.
+Cloudflare compte en neurones. Le plan gratuit en donne 10 000 par jour, puis refuse les demandes sans rien facturer. Prix relevés sur [la grille Workers AI](https://developers.cloudflare.com/workers-ai/platform/pricing/) en novembre 2026.
 
-| Étape | Modèle | Neurones |
-| --- | --- | --- |
-| Voix vers texte | `@cf/openai/whisper-large-v3-turbo` | 46,63 par minute de parole |
-| Réponse | `@cf/mistralai/mistral-small-3.1-24b-instruct` | 31 876 par million de jetons reçus, 50 488 par million de jetons produits |
-| Texte vers voix | `@cf/myshell-ai/melotts` | 18,63 par minute d'audio |
+| Étape | Modèle | Tarif | Pour un échange type |
+| --- | --- | --- | --- |
+| Voix vers texte | `@cf/openai/whisper-large-v3-turbo` | 46,63 neurones par minute de question | 4 s de question : environ 3 |
+| Réponse | `@cf/mistralai/mistral-small-3.1-24b-instruct` | 31 876 par million de jetons lus, 50 488 par million écrits | 2 000 à 2 600 jetons lus, 60 à 100 écrits : 65 à 85 |
+| Texte vers voix | `@cf/myshell-ai/melotts` | 18,63 par minute de voix produite | 15 s de réponse : environ 5 |
 
-Estimation : environ 90 neurones par échange, soit une centaine d'échanges par jour sans payer. C'est la longueur de la base de connaissances qui pèse le plus. Pour aller au-delà, le plan Workers Paid coûte 5 $ par mois, plus environ 0,1 centime par échange.
+Total : environ 75 à 95 neurones par échange, soit une centaine d'échanges gratuits par jour. Avec `?voix=navigateur`, la voix ne coûte rien.
+
+Le modèle relit toutes les consignes et toute la base de connaissances (environ 1 900 jetons) à chaque question : c'est 85 % de la consommation. Raccourcir `BASE` dans `src/connaissances.js` est donc le moyen le plus efficace de payer moins.
+
+Le reste est négligeable : l'introduction est fabriquée une fois par jour puis gardée en cache (environ 9 neurones), une vérification sur `/test.html` coûte environ 2 neurones, et chaque échange ne compte que pour une demande sur les 100 000 que le plan gratuit Workers autorise par jour.
+
+Les vrais chiffres s'affichent après chaque réponse avec `/?mesures` : neurones par étape, jetons lus et écrits, et nombre d'échanges gratuits par jour à ce rythme.
+
+Au-delà du gratuit, le plan Workers Paid coûte 5 $ par mois, plus 0,011 $ les 1 000 neurones, soit environ 0,1 centime par échange.
 
 ## Pourquoi pas le kit officiel `@cloudflare/voice`
 
@@ -76,6 +97,6 @@ Le kit garde le micro ouvert en continu, et son modèle français possible (Nova
 npm test
 ```
 
-Les tests couvrent le texte : nombres, prononciation, découpage des phrases, phrases inventées par Whisper sur du silence. Le parcours complet a été vérifié dans un navigateur avec un micro et des modèles simulés. La qualité réelle des modèles se vérifie en ligne, avec `/test.html`.
+Les tests couvrent le texte : nombres, prononciation, langues, découpage des phrases (y compris en chinois), phrases inventées par Whisper sur du silence, durée des voix et calcul de la consommation. Le parcours complet a été vérifié dans un navigateur avec un micro et des modèles simulés. La qualité réelle des modèles se vérifie en ligne, avec `/test.html`.
 
 Polices : Fraunces et IBM Plex Sans, sous licence SIL Open Font, hébergées ici pour ne rien charger depuis un service tiers.

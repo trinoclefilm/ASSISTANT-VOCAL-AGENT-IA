@@ -1,4 +1,12 @@
-import { DetecteurParole, decoderBase64, jouerTampon, ouvrirMicro, parlerNavigateur, priseEnWavBase64 } from "/audio.js";
+import {
+  DetecteurParole,
+  decoderBase64,
+  jouerTampon,
+  ouvrirMicro,
+  parlerNavigateur,
+  priseEnWavBase64,
+  texteConsommation,
+} from "/audio.js";
 import { creerTourelle } from "/tourelle.js";
 
 const $ = (id) => document.getElementById(id);
@@ -17,6 +25,8 @@ const STATUTS = {
   ecrit: "Écrivez votre question ci-dessous.",
   pause: "Micro coupé. Touchez l'objectif pour reprendre.",
 };
+const LANGUES_PAGE = { fr: "fr", en: "en", zh: "zh-CN" };
+const NOMS_LANGUES = { fr: "français", en: "anglais", zh: "chinois" };
 const LIBELLES = {
   repos: "Parler à l'assistant",
   ecoute: "Terminer ma question maintenant",
@@ -47,6 +57,7 @@ const etat = {
   premierSon: null,
   ecouteDepuis: 0,
   jeton: 0,
+  langue: null,
 };
 
 function signaler(type, donnees = {}) {
@@ -176,13 +187,14 @@ async function lireSuivante() {
   if (jeton !== etat.jeton) return;
 
   etat.reponseEnCours = `${etat.reponseEnCours} ${phrase.texte}`.trim();
+  $("st-reponse").lang = LANGUES_PAGE[phrase.langue] ?? "fr";
   sousTitres(undefined, phrase.texte);
   passerA("parole");
   if (etat.finParole && etat.premierSon === null) {
     etat.premierSon = performance.now() - etat.finParole;
     if (avecMesures) $("mesures").textContent = `Premier son ${Math.round(etat.premierSon)} ms après la fin de la question.`;
   }
-  etat.lecture = tampon ? jouerTampon(etat.contexte, tampon, etat.analyseur) : parlerNavigateur(phrase.texte);
+  etat.lecture = tampon ? jouerTampon(etat.contexte, tampon, etat.analyseur) : parlerNavigateur(phrase.texte, phrase.langue);
   await etat.lecture.fini;
   if (jeton !== etat.jeton) return;
   etat.lecture = null;
@@ -210,16 +222,18 @@ function traiter(message) {
   switch (message.t) {
     case "transcription":
       etat.questionEnCours = message.texte;
+      etat.langue = message.langue ?? etat.langue;
       etat.silencesVides = 0;
       $("aide").textContent = "";
+      $("st-question").lang = LANGUES_PAGE[etat.langue] ?? "fr";
       sousTitres(message.texte, "");
-      signaler("transcription", { texte: message.texte });
+      signaler("transcription", { texte: message.texte, langue: etat.langue });
       break;
     case "intention":
       afficherCartes(message.intention);
       break;
     case "phrase":
-      ajouterPhrase({ texte: message.texte, audio: message.audio });
+      ajouterPhrase({ texte: message.texte, audio: message.audio, langue: etat.langue ?? "fr" });
       break;
     case "rien":
       etat.silencesVides += 1;
@@ -227,12 +241,13 @@ function traiter(message) {
       break;
     case "erreur":
       afficherCartes("rdv");
-      ajouterPhrase({ texte: message.texte, audio: null });
+      ajouterPhrase({ texte: message.texte, audio: null, langue: message.langue ?? etat.langue ?? "fr" });
       break;
     case "fin":
       if (avecMesures && message.mesures) {
         const m = message.mesures;
-        $("mesures").textContent = `${etat.premierSon ? `Premier son ${Math.round(etat.premierSon)} ms. ` : ""}Transcription ${m.transcription ?? 0} ms, premier mot ${m.premierMot ?? 0} ms, première voix ${m.premiereVoix ?? 0} ms.`;
+        const langue = etat.langue ? ` Langue : ${NOMS_LANGUES[etat.langue]}.` : "";
+        $("mesures").textContent = `${etat.premierSon ? `Premier son ${Math.round(etat.premierSon)} ms. ` : ""}Transcription ${m.transcription ?? 0} ms, premier mot ${m.premierMot ?? 0} ms, première voix ${m.premiereVoix ?? 0} ms.${langue} ${texteConsommation(m.conso)}`;
       }
       break;
     default:
@@ -257,7 +272,7 @@ async function poser({ audio, texte }) {
     const reponse = await fetch("/api/tour", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ audio, texte, historique: etat.historique, voix: voixChoisie }),
+      body: JSON.stringify({ audio, texte, historique: etat.historique, voix: voixChoisie, langue: etat.langue }),
       signal: controleur.signal,
     });
     if (!reponse.ok) {
@@ -280,7 +295,7 @@ async function poser({ audio, texte }) {
     }
   } catch (erreur) {
     if (erreur.name === "AbortError") return;
-    traiter({ t: "erreur", texte: "La connexion a été coupée. Vérifiez votre réseau et réessayez." });
+    traiter({ t: "erreur", texte: "La connexion a été coupée. Vérifiez votre réseau et réessayez.", langue: "fr" });
   }
   if (jeton !== etat.jeton) return;
   etat.fluxTermine = true;
@@ -295,9 +310,9 @@ async function jouerAccueil() {
     const reponse = await fetch("/api/accueil");
     const { phrases } = await reponse.json();
     if (jeton !== etat.jeton) return;
-    for (const phrase of phrases) etat.file.push(voixChoisie === "navigateur" ? { texte: phrase.texte, audio: null } : phrase);
+    for (const phrase of phrases) etat.file.push({ texte: phrase.texte, audio: voixChoisie === "navigateur" ? null : phrase.audio, langue: "fr" });
   } catch {
-    etat.file.push({ texte: "Bonjour, je suis l'assistant vocal de Trinocle Film, une intelligence artificielle. Je vous écoute.", audio: null });
+    etat.file.push({ texte: "Bonjour, je suis l'assistant vocal de Trinocle Film, une intelligence artificielle. Je vous écoute.", audio: null, langue: "fr" });
   }
   etat.fluxTermine = true;
   lireSuivante();
@@ -330,6 +345,7 @@ function terminer() {
   etat.contexte = null;
   etat.analyseur = null;
   etat.historique = [];
+  etat.langue = null;
   afficherCartes(null);
   sousTitres("", "");
   $("mesures").textContent = "";

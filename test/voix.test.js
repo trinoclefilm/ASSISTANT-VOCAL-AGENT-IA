@@ -29,9 +29,9 @@ test("la voix ne lit ni symbole, ni lien, ni chiffre", () => {
 });
 
 test("les sigles passent par la table de prononciation", () => {
-  const dit = pourLaVoix("TRINOCLE FILM améliore votre ROI grâce à l'IA et à votre CRM.", PRONONCIATION);
+  const dit = pourLaVoix("TRINOCLE FILM améliore votre ROI grâce à l'IA et à votre CRM.", PRONONCIATION.fr);
   assert.equal(dit, "Trinocle Film améliore votre retour sur investissement grâce à l'intelligence artificielle et à votre cé ère ème.");
-  assert.equal(pourLaVoix("Vidéo, film, roi et lego", PRONONCIATION), "Vidéo, film, roi et lego");
+  assert.equal(pourLaVoix("Vidéo, film, roi et lego", PRONONCIATION.fr), "Vidéo, film, roi et lego");
 });
 
 test("les phrases inventées sur du silence sont écartées", () => {

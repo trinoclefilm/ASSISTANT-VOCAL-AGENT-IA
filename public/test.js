@@ -1,4 +1,12 @@
-import { DetecteurParole, decoderBase64, jouerTampon, ouvrirMicro, parlerNavigateur, priseEnWavBase64 } from "/audio.js";
+import {
+  DetecteurParole,
+  decoderBase64,
+  jouerTampon,
+  ouvrirMicro,
+  parlerNavigateur,
+  priseEnWavBase64,
+  texteConsommation,
+} from "/audio.js";
 
 const $ = (id) => document.getElementById(id);
 let contexte = null;
@@ -10,7 +18,34 @@ function audio() {
   return contexte;
 }
 
-$("phrase").value = $("modele").value;
+const EXEMPLES = {
+  fr: [
+    "Trinocle Film produit des vidéos interactives pour les entreprises.",
+    "Un projet se déroule en 8 semaines, de la conception à la post-production.",
+    "Les élèves ont écouté une histoire, puis ils ont répondu à voix haute : quelle est votre réponse ?",
+    "Avec un panier moyen de 300 € et 30 % de conversion perdue, le retour sur investissement se calcule vite.",
+  ],
+  en: [
+    "Trinocle Film creates interactive videos for businesses.",
+    "A project takes 8 weeks, from concept to post-production.",
+    "With an average basket of 300 € and 30 % of lost conversions, the return on investment adds up quickly.",
+  ],
+  zh: [
+    "Trinocle Film 为企业制作互动视频。",
+    "一个项目从构思到后期制作，大约需要八周。",
+    "观众不再只是观看，而是参与自己的决定。",
+  ],
+};
+const NOMS_LANGUES = { fr: "français", en: "anglais", zh: "chinois" };
+
+function remplirExemples() {
+  const langue = $("langue").value;
+  $("modele").replaceChildren(...EXEMPLES[langue].map((texte) => new Option(texte, texte)));
+  $("phrase").value = $("modele").value;
+  $("phrase").lang = langue === "zh" ? "zh-CN" : langue;
+}
+remplirExemples();
+$("langue").addEventListener("change", remplirExemples);
 $("modele").addEventListener("change", () => {
   $("phrase").value = $("modele").value;
 });
@@ -23,12 +58,12 @@ $("voix-cloudflare").addEventListener("click", async () => {
     const reponse = await fetch("/api/voix", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ texte: $("phrase").value }),
+      body: JSON.stringify({ texte: $("phrase").value, langue: $("langue").value }),
     });
     const donnees = await reponse.json();
-    if (!reponse.ok || !donnees.audio) throw new Error(donnees.erreur ?? "Aucun son reçu.");
+    if (!reponse.ok || !donnees.audio) throw new Error(`${donnees.erreur ?? "Aucun son reçu."}${donnees.detail ? ` [${donnees.detail}]` : ""}`);
     enLecture = jouerTampon(ctx, await decoderBase64(ctx, donnees.audio));
-    $("resultat-voix").textContent = `Fabriquée en ${donnees.duree} ms. Texte lu : ${donnees.prononce}`;
+    $("resultat-voix").textContent = `Fabriquée en ${donnees.duree} ms. Texte lu : ${donnees.prononce}\n${texteConsommation(donnees.conso, { parJour: false })}`;
   } catch (erreur) {
     $("resultat-voix").textContent = erreur.message;
   }
@@ -36,7 +71,7 @@ $("voix-cloudflare").addEventListener("click", async () => {
 
 $("voix-telephone").addEventListener("click", () => {
   enLecture?.arreter();
-  enLecture = parlerNavigateur($("phrase").value);
+  enLecture = parlerNavigateur($("phrase").value, $("langue").value);
   $("resultat-voix").textContent = "Voix intégrée à ce téléphone : aucun coût, mais elle change d'un appareil à l'autre.";
 });
 
@@ -120,11 +155,13 @@ $("micro").addEventListener("click", async () => {
         const lignes = brut.split("\n").filter(Boolean).map((l) => JSON.parse(l));
         const probleme = lignes.find((l) => l.t === "erreur");
         if (probleme) throw new Error(`${probleme.texte}${probleme.detail ? ` [${probleme.detail}]` : ""}`);
-        const texte = lignes.find((l) => l.t === "transcription")?.texte;
-        const duree = lignes.find((l) => l.mesures)?.mesures?.transcription;
+        const ligne = lignes.find((l) => l.t === "transcription");
+        const texte = ligne?.texte;
+        const mesures = lignes.find((l) => l.mesures)?.mesures;
         $("transcription").textContent = texte ?? "";
+        $("transcription").lang = ligne?.langue === "zh" ? "zh-CN" : (ligne?.langue ?? "fr");
         etat.textContent = texte
-          ? `Transcrit en ${duree ?? "?"} ms.`
+          ? `Transcrit en ${mesures?.transcription ?? "?"} ms. Langue détectée : ${NOMS_LANGUES[ligne.langue] ?? "?"}.\n${texteConsommation(mesures?.conso, { parJour: false })}`
           : "J'ai entendu un son, mais pas de paroles claires. Rapproche-toi du micro et réessaie.";
       } catch (erreur) {
         etat.textContent = `Échec : ${erreur.message}`;

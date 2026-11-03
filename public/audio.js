@@ -179,21 +179,46 @@ export function jouerTampon(contexte, tampon, analyseur) {
 }
 
 // Voix intégrée au téléphone : solution de secours, et point de comparaison pour la page de test.
-export function parlerNavigateur(texte) {
+// Si le téléphone n'a pas de voix dans cette langue, il prend sa voix par défaut.
+const VOIX_TELEPHONE = {
+  fr: { code: "fr-FR", preferees: /google|audrey|amelie|thomas|premium|enhanced/i },
+  en: { code: "en-US", preferees: /google|samantha|daniel|premium|enhanced/i },
+  zh: { code: "zh-CN", preferees: /google|tingting|ting-ting|meijia|premium|enhanced/i },
+};
+
+export function parlerNavigateur(texte, langue = "fr") {
   if (!("speechSynthesis" in window)) return { fini: Promise.resolve(), arreter() {} };
+  const reglage = VOIX_TELEPHONE[langue] ?? VOIX_TELEPHONE.fr;
   const enonce = new SpeechSynthesisUtterance(texte);
-  enonce.lang = "fr-FR";
-  const voix = speechSynthesis.getVoices().filter((v) => v.lang?.toLowerCase().startsWith("fr"));
-  enonce.voice = voix.find((v) => /google|audrey|amelie|thomas|premium|enhanced/i.test(v.name)) ?? voix[0] ?? null;
+  enonce.lang = reglage.code;
+  const prefixe = reglage.code.slice(0, 2);
+  const voix = speechSynthesis.getVoices().filter((v) => v.lang?.toLowerCase().startsWith(prefixe));
+  enonce.voice = voix.find((v) => reglage.preferees.test(v.name)) ?? voix[0] ?? null;
   enonce.rate = 1.02;
   let garde;
+  const han = (texte.match(/\p{Script=Han}/gu) ?? []).length;
   const fini = new Promise((resoudre) => {
     enonce.onend = resoudre;
     enonce.onerror = resoudre;
     // Certains téléphones n'annoncent jamais la fin : on repart quand même.
-    garde = setTimeout(resoudre, texte.length * 95 + 2500);
+    garde = setTimeout(resoudre, (texte.length - han) * 95 + han * 260 + 2500);
   }).finally(() => clearTimeout(garde));
   speechSynthesis.cancel();
   speechSynthesis.speak(enonce);
   return { fini, arreter: () => speechSynthesis.cancel() };
+}
+
+// Texte lisible de ce qu'a consommé un échange, pour le mode ?mesures et la page de test.
+const nombre = (n) => Number(n ?? 0).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+
+export function texteConsommation(conso, { parJour: avecParJour = true } = {}) {
+  if (!conso?.neurones) return "";
+  const n = conso.neurones;
+  const morceaux = [];
+  if (n.transcription) morceaux.push(`écoute ${nombre(n.transcription)}`);
+  if (n.reponse) morceaux.push(`réponse ${nombre(n.reponse)}`);
+  if (n.voix) morceaux.push(`voix ${nombre(n.voix)}`);
+  const jetons = conso.jetonsLus ? ` ${nombre(conso.jetonsLus)} jetons lus et ${nombre(conso.jetonsEcrits)} écrits.` : "";
+  const parJour = avecParJour && n.total > 0 ? ` À ce rythme, environ ${nombre(Math.floor(10000 / n.total))} échanges gratuits par jour.` : "";
+  return `Consommation${conso.estime ? " estimée" : ""} : ${nombre(n.total)} neurones${morceaux.length ? ` (${morceaux.join(", ")})` : ""}.${jetons}${parJour}`;
 }

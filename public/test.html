@@ -29,13 +29,15 @@
 
   <section>
     <h2>1. Écouter la voix</h2>
-    <label for="phrase">Phrase à faire lire</label>
-    <select id="modele">
-      <option>Trinocle Film produit des vidéos interactives pour les entreprises.</option>
-      <option>Un projet se déroule en 8 semaines, de la conception à la post-production.</option>
-      <option>Les élèves ont écouté une histoire, puis ils ont répondu à voix haute : quelle est votre réponse ?</option>
-      <option>Avec un panier moyen de 300 € et 30 % de conversion perdue, le retour sur investissement se calcule vite.</option>
+    <label for="langue">Langue</label>
+    <select id="langue">
+      <option value="fr">Français</option>
+      <option value="en">Anglais (English)</option>
+      <option value="zh">Chinois (中文)</option>
     </select>
+    <label for="modele">Phrase d'exemple</label>
+    <select id="modele"></select>
+    <label for="phrase">Phrase à faire lire (tu peux la modifier)</label>
     <textarea id="phrase" rows="3" maxlength="300"></textarea>
     <div class="boutons">
       <button id="voix-cloudflare" class="principal" type="button">Voix Cloudflare</button>
@@ -46,7 +48,7 @@
 
   <section>
     <h2>2. Tester la compréhension</h2>
-    <p>Touche le bouton, dis une phrase, puis attends la fin du silence (ou retouche le bouton pour terminer). Essaie aussi avec un accent étranger : c'est ce que feront des élèves de français.</p>
+    <p>Touche le bouton, dis une phrase, puis attends la fin du silence (ou retouche le bouton pour terminer). Essaie aussi avec un accent étranger, puis en anglais et en chinois : la langue détectée s'affiche avec le texte.</p>
     <div class="boutons">
       <button id="micro" class="principal" type="button">Parler</button>
     </div>

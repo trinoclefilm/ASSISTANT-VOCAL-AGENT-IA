@@ -26,6 +26,6 @@ body { min-height: auto; }
   border: 1px solid var(--gris);
   border-radius: 6px;
 }
-.resultat { color: var(--gris); font-size: 15px; }
+.resultat { color: var(--gris); font-size: 15px; white-space: pre-line; }
 .resultat:empty { display: none; }
 .lien-simple { color: var(--tungstene); text-underline-offset: 3px; }
