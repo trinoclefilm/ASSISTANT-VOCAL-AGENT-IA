@@ -1,0 +1,10 @@
+{
+  "name": "assistant-vocal-agent-ia",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent vocal Trinocle Film sur Cloudflare Workers : voix, réponse IA, voix.",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

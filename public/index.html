@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Assistant vocal Trinocle Film</title>
+<meta name="description" content="Posez vos questions à voix haute sur les vidéos interactives de Trinocle Film : prix, délais, exemples, retour sur investissement.">
+<meta name="theme-color" content="#202A2E">
+<link rel="preload" href="/fonts/fraunces-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="entete">
+  <span class="marque">Trinocle Film</span>
+  <button id="bouton-terminer" class="lien" type="button">Terminer</button>
+</header>
+
+<main class="scene">
+  <div class="colonne-tourelle">
+    <button id="tourelle" class="tourelle" type="button">
+      <svg id="tourelle-svg" viewBox="0 0 400 400" aria-hidden="true" focusable="false"></svg>
+    </button>
+    <p id="statut" class="statut" aria-live="polite"></p>
+  </div>
+
+  <div class="colonne-texte">
+    <section class="ouverture">
+      <h1>Posez votre question à voix haute.</h1>
+      <p>Un assistant IA vous répond sur les vidéos interactives de Trinocle Film : prix, délais, exemples, retour sur investissement.</p>
+      <button id="bouton-demarrer" class="principal" type="button">Parler à l'assistant</button>
+      <p class="mention">Votre voix est transcrite par Cloudflare puis effacée. Ce site ne garde aucun enregistrement.</p>
+    </section>
+
+    <section class="sous-titres" aria-live="polite">
+      <p id="st-question" class="st-question"></p>
+      <p id="st-reponse" class="st-reponse"></p>
+    </section>
+    <p id="aide" class="aide" role="status"></p>
+
+    <section id="carte-prix" class="carte" hidden>
+      <p>Donnez votre fourchette de budget en rendez-vous : vous recevez trois propositions à l'intérieur.</p>
+    </section>
+
+    <section id="carte-deroule" class="carte" hidden>
+      <h2>Un projet en huit semaines</h2>
+      <ol class="deroule">
+        <li><b>Semaines 1 et 2</b> Conception et stratégie</li>
+        <li><b>Semaines 3 et 4</b> Pré-production, casting et script final</li>
+        <li><b>Semaines 5 et 6</b> Production et tournage</li>
+        <li><b>Semaines 7 et 8</b> Post-production et interactivité</li>
+      </ol>
+    </section>
+
+    <section id="carte-exemples" class="carte" hidden>
+      <h2>Quatre exemples du format</h2>
+      <ul class="exemples">
+        <li><a href="https://video.eko.com/60sc-the-world-your-way/60scbali?autoplay=true" target="_blank" rel="noopener">Exemple 1 : Bali</a></li>
+        <li><a href="https://video.eko.com/v/AKn5dq" target="_blank" rel="noopener">Exemple 2</a></li>
+        <li><a href="https://video.eko.com/v/Vv4L4N" target="_blank" rel="noopener">Exemple 3</a></li>
+        <li><a href="https://share.voomly.com/f/tg_hHmgfj" target="_blank" rel="noopener">Exemple 4</a></li>
+      </ul>
+    </section>
+
+    <div id="suggestions" class="suggestions" hidden>
+      <button type="button" data-question="Combien ça coûte ?">Combien ça coûte ?</button>
+      <button type="button" data-question="Comment se passe un projet ?">Comment se passe un projet ?</button>
+      <button type="button" data-question="Montrez-moi des exemples.">Montrez-moi des exemples</button>
+      <button type="button" data-question="Et si ça ne marche pas ?">Et si ça ne marche pas ?</button>
+    </div>
+
+    <div class="bas">
+      <form id="composeur" class="composeur" autocomplete="off">
+        <label for="question" class="masque">Écrire votre question</label>
+        <input id="question" name="question" type="text" maxlength="500" placeholder="Ou écrivez votre question" enterkeyhint="send">
+        <button type="submit">Envoyer</button>
+      </form>
+      <a id="bouton-rdv" class="rdv" href="https://calendly.com/trinocle-film/new-meeting" target="_blank" rel="noopener">Réserver un rendez-vous avec Torino</a>
+    </div>
+    <p id="mesures" class="mesures"></p>
+  </div>
+</main>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

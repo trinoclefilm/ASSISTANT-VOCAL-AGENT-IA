@@ -1,0 +1,31 @@
+body { min-height: auto; }
+.banc { width: 100%; max-width: 620px; margin: 0 auto; padding-bottom: 40px; }
+.banc h1 { margin: 12px 0 8px; max-width: none; text-align: left; }
+.intro { margin: 0 0 8px; color: var(--gris); }
+.banc section { border-top: 1px solid var(--filet); margin-top: 24px; padding-top: 16px; }
+.banc h2 { margin: 0 0 10px; font: 600 21px/1.2 var(--affichage); }
+.banc section p { margin: 0 0 10px; }
+.banc label { display: block; margin-bottom: 6px; color: var(--gris); }
+.banc select, .banc textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background: var(--ardoise-haute);
+  border: 1px solid var(--filet);
+  border-radius: 6px;
+  color: var(--papier);
+  font: inherit;
+}
+.boutons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.boutons .principal { flex: 1 1 150px; max-width: none; }
+.secondaire {
+  flex: 1 1 150px;
+  min-height: 54px;
+  background: none;
+  border: 1px solid var(--gris);
+  border-radius: 6px;
+}
+.resultat { color: var(--gris); font-size: 15px; }
+.resultat:empty { display: none; }
+.lien-simple { color: var(--tungstene); text-underline-offset: 3px; }

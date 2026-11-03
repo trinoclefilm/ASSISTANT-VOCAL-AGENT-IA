@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Test de la voix française</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#202A2E">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/test.css">
+</head>
+<body>
+<header class="entete">
+  <span class="marque">Trinocle Film</span>
+  <a class="lien-simple" href="/?mesures">Conversation chronométrée</a>
+</header>
+<main class="banc">
+  <h1>Test de la voix française</h1>
+  <p class="intro">À faire avant de promettre quoi que ce soit à un client. Écoute, parle, et note ce qui sonne faux.</p>
+
+  <section>
+    <h2>1. Écouter la voix</h2>
+    <label for="phrase">Phrase à faire lire</label>
+    <select id="modele">
+      <option>Trinocle Film produit des vidéos interactives pour les entreprises.</option>
+      <option>Un projet se déroule en 8 semaines, de la conception à la post-production.</option>
+      <option>Les élèves ont écouté une histoire, puis ils ont répondu à voix haute : quelle est votre réponse ?</option>
+      <option>Avec un panier moyen de 300 € et 30 % de conversion perdue, le retour sur investissement se calcule vite.</option>
+    </select>
+    <textarea id="phrase" rows="3" maxlength="300"></textarea>
+    <div class="boutons">
+      <button id="voix-cloudflare" class="principal" type="button">Voix Cloudflare</button>
+      <button id="voix-telephone" class="secondaire" type="button">Voix du téléphone</button>
+    </div>
+    <p id="resultat-voix" class="resultat" role="status"></p>
+  </section>
+
+  <section>
+    <h2>2. Tester la compréhension</h2>
+    <p>Touche le bouton, dis une phrase, puis attends. Essaie aussi avec un accent étranger : c'est ce que feront des élèves de français.</p>
+    <div class="boutons">
+      <button id="micro" class="principal" type="button">Parler</button>
+    </div>
+    <p id="resultat-micro" class="resultat" role="status"></p>
+    <p id="transcription" class="st-reponse" aria-live="polite"></p>
+  </section>
+
+  <section>
+    <h2>3. Tester la conversation</h2>
+    <p>La conversation chronométrée affiche le temps entre la fin de ta question et le premier son. C'est ce chiffre qu'il faut regarder avant de promettre une réponse instantanée.</p>
+    <p><a class="lien-simple" href="/?mesures">Avec la voix Cloudflare</a></p>
+    <p><a class="lien-simple" href="/?mesures&amp;voix=navigateur">Avec la voix du téléphone</a></p>
+  </section>
+</main>
+<script type="module" src="/test.js"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+@font-face { font-family: "Fraunces"; src: url("/fonts/fraunces-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; src: url("/fonts/plex-sans-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; src: url("/fonts/plex-sans-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; src: url("/fonts/plex-sans-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+
+:root {
+  --ardoise: #202A2E;
+  --ardoise-haute: #2D393E;
+  --filet: #46535A;
+  --gris: #B6BFBD;
+  --papier: #F4F1E8;
+  --tungstene: #F2B544;
+  --encre: #1B1F1E;
+  --affichage: "Fraunces", Georgia, serif;
+  --texte: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ardoise);
+  color: var(--papier);
+  font: 400 16px/1.5 var(--texte);
+  padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px, env(safe-area-inset-left));
+}
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--tungstene); outline-offset: 3px; }
+.masque { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+}
+.marque { font: 600 19px/1 var(--affichage); }
+.lien {
+  background: none;
+  border: 0;
+  padding: 10px 0 10px 16px;
+  color: var(--gris);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  visibility: hidden;
+}
+.lance .lien { visibility: visible; }
+
+.scene {
+  flex: 1;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+.colonne-tourelle { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.colonne-texte { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+
+.tourelle {
+  display: block;
+  width: min(68vw, 38dvh, 340px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.tourelle svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.lance .tourelle { width: min(58vw, 30dvh, 320px); }
+.gravure { font: 500 12.5px var(--texte); letter-spacing: .14em; fill: #C9D0CE; }
+
+.statut { min-height: 24px; margin: 10px 0 0; color: var(--gris); text-align: center; }
+
+.ouverture { text-align: center; }
+.lance .ouverture { display: none; }
+h1 {
+  margin: 12px auto 10px;
+  max-width: 13em;
+  font: 600 clamp(30px, 8.4vw, 46px)/1.08 var(--affichage);
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+.ouverture p { margin: 0 auto 18px; max-width: 34em; color: var(--gris); }
+.ouverture .mention { margin: 12px auto 0; font-size: 14px; }
+.principal {
+  width: 100%;
+  max-width: 340px;
+  min-height: 54px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--tungstene);
+  color: var(--encre);
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.sous-titres { display: none; text-align: center; min-height: 96px; }
+.lance .sous-titres { display: block; }
+.st-question { margin: 0 0 8px; color: var(--gris); font-size: 15px; }
+.st-question:empty { display: none; }
+.st-reponse {
+  margin: 0;
+  font-weight: 500;
+  font-size: clamp(20px, 5.6vw, 25px);
+  line-height: 1.32;
+  text-wrap: balance;
+}
+.aide { margin: 0; color: var(--tungstene); text-align: center; font-size: 15px; }
+.aide:empty { display: none; }
+
+.carte { border-top: 1px solid var(--filet); padding-top: 12px; }
+.carte h2 { margin: 0 0 8px; font: 600 19px/1.2 var(--affichage); }
+.carte p { margin: 0; color: var(--gris); text-align: center; }
+.deroule { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.deroule b { display: block; font-weight: 600; font-size: 14px; color: var(--tungstene); }
+.exemples { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.exemples a { display: block; padding: 6px 0; color: var(--papier); text-underline-offset: 3px; }
+
+/* Sur téléphone, les questions types tiennent sur une ligne qu'on fait glisser. */
+.suggestions {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 2px 16px;
+  scrollbar-width: none;
+}
+.suggestions::-webkit-scrollbar { display: none; }
+.suggestions button {
+  flex: none;
+  min-height: 44px;
+  padding: 7px 14px;
+  background: var(--ardoise-haute);
+  border: 1px solid var(--filet);
+  border-radius: 22px;
+  font-size: 15px;
+}
+
+.bas { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.composeur { display: flex; gap: 8px; }
+.composeur input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 14px;
+  background: var(--ardoise-haute);
+  border: 1px solid var(--filet);
+  border-radius: 6px;
+  font-size: 16px;
+}
+.composeur input::placeholder { color: var(--gris); }
+.composeur button {
+  min-height: 48px;
+  padding: 0 16px;
+  background: none;
+  border: 1px solid var(--gris);
+  border-radius: 6px;
+}
+.rdv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--tungstene);
+  text-align: center;
+  font-weight: 500;
+  text-underline-offset: 3px;
+  transition: background-color .25s, color .25s;
+}
+.rdv.eclaire { background: var(--tungstene); color: var(--encre); font-weight: 600; text-decoration: none; }
+.mesures { margin: 0; color: var(--gris); font-size: 13px; text-align: center; }
+.mesures:empty { display: none; }
+
+/* Grand écran ou téléphone couché : la tourelle à gauche, le texte à droite. */
+@media (min-width: 860px), (orientation: landscape) and (max-height: 560px) {
+  .scene { flex-direction: row; align-items: center; justify-content: center; gap: clamp(24px, 6vw, 80px); }
+  .colonne-tourelle { width: auto; flex: none; }
+  .colonne-texte { flex: 0 1 520px; align-self: stretch; justify-content: center; }
+  .tourelle, .lance .tourelle { width: min(42vw, 62dvh, 460px); }
+  .ouverture, .sous-titres, .carte p, .aide { text-align: left; }
+  .ouverture p, .ouverture .mention, h1 { margin-left: 0; }
+  .suggestions { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; }
+  .bas { margin-top: 8px; }
+  .rdv { justify-content: flex-start; padding-left: 0; }
+  .rdv.eclaire { justify-content: center; }
+}
+
+/* Téléphone couché : tout doit tenir sans faire défiler. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .entete { position: absolute; right: max(16px, env(safe-area-inset-right)); top: 0; min-height: 40px; }
+  .marque { display: none; }
+  .scene { padding-top: 12px; }
+  .tourelle, .lance .tourelle { width: min(36vw, 76dvh); }
+  h1 { font-size: 26px; margin-top: 28px; }
+  .ouverture p { display: none; }
+  .ouverture .mention { display: block; }
+  .principal { min-height: 46px; }
+  .rdv { min-height: 36px; }
+}
+
+/* Par-dessus une vidéo : pas d'en-tête, un voile d'ardoise qui laisse deviner l'image. */
+:root.integre { color-scheme: normal; }
+.integre body { background: rgb(32 42 46 / .86); }
+.integre .entete { position: absolute; right: 12px; left: auto; top: 4px; min-height: 40px; }
+.integre .marque { display: none; }
+.integre .scene { padding-top: 14px; }
+.integre .tourelle, .integre .lance .tourelle { width: min(36vw, 34dvh, 200px); }
+.integre h1 { font-size: clamp(22px, 5vw, 30px); margin-top: 6px; }
+.integre .ouverture p { display: none; }
+.integre .ouverture .mention { display: block; font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
