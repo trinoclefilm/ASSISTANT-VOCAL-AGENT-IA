@@ -188,7 +188,12 @@ function tour(corps, env, ctx) {
         if (erreur === CLIENT_PARTI) return;
         const code = typeIncident(erreur);
         console.error(`Tour interrompu (${code}) : ${String(erreur?.message ?? erreur).slice(0, 160)}`);
-        await envoyer({ t: "erreur", code, texte: PHRASES_INCIDENT[code] }).catch(() => {});
+        await envoyer({
+          t: "erreur",
+          code,
+          texte: PHRASES_INCIDENT[code],
+          detail: String(erreur?.message ?? erreur).slice(0, 200),
+        }).catch(() => {});
       })
       .finally(() => ecrivain.close().catch(() => {})),
   );
@@ -226,11 +231,64 @@ async function lireCorps(requete) {
   }
 }
 
+// Silence de 0,6 s au format attendu par Whisper : sert à vérifier que le modèle répond.
+function silenceWav() {
+  const echantillons = 9600;
+  const octets = new Uint8Array(44 + echantillons * 2);
+  const vue = new DataView(octets.buffer);
+  const texte = (d, t) => [...t].forEach((c, i) => vue.setUint8(d + i, c.charCodeAt(0)));
+  texte(0, "RIFF");
+  vue.setUint32(4, 36 + echantillons * 2, true);
+  texte(8, "WAVEfmt ");
+  vue.setUint32(16, 16, true);
+  vue.setUint16(20, 1, true);
+  vue.setUint16(22, 1, true);
+  vue.setUint32(24, 16000, true);
+  vue.setUint32(28, 32000, true);
+  vue.setUint16(32, 2, true);
+  vue.setUint16(34, 16, true);
+  texte(36, "data");
+  vue.setUint32(40, echantillons * 2, true);
+  let binaire = "";
+  for (const o of octets) binaire += String.fromCharCode(o);
+  return btoa(binaire);
+}
+
+// Essaie chaque modèle une fois, avec le plus petit appel possible, et dit lequel échoue et pourquoi.
+async function diagnostic(env) {
+  const etapes = [
+    ["Voix vers texte", () => env.AI.run(MODELES.transcription, { audio: silenceWav(), language: "fr" })],
+    [
+      "Réponse",
+      () => env.AI.run(MODELES.reponse, { messages: [{ role: "user", content: "Dis bonjour." }], max_tokens: 5 }),
+    ],
+    ["Texte vers voix", () => env.AI.run(MODELES.voix, { prompt: "Bonjour.", lang: "fr" })],
+  ];
+  const resultats = [];
+  for (const [nom, appel] of etapes) {
+    const debut = Date.now();
+    try {
+      await appel();
+      resultats.push({ nom, ok: true, ms: Date.now() - debut });
+    } catch (erreur) {
+      resultats.push({ nom, ok: false, ms: Date.now() - debut, detail: String(erreur?.message ?? erreur).slice(0, 200) });
+    }
+  }
+  return resultats;
+}
+
 export default {
   async fetch(requete, env, ctx) {
     const { pathname } = new URL(requete.url);
 
     if (pathname === "/api/accueil" && requete.method === "GET") return accueil(requete, env, ctx);
+
+    if (pathname === "/api/diagnostic") {
+      if (requete.method !== "POST") return enJson({ erreur: "Méthode non acceptée." }, 405);
+      if (!memeOrigine(requete)) return enJson({ erreur: "Origine refusée." }, 403);
+      if (tropDeDemandes(requete)) return enJson({ erreur: "Trop de demandes, réessayez dans une minute." }, 429);
+      return enJson({ etapes: await diagnostic(env) });
+    }
 
     if (pathname === "/api/tour" || pathname === "/api/voix") {
       if (requete.method !== "POST") return enJson({ erreur: "Méthode non acceptée." }, 405);

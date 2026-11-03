@@ -19,6 +19,15 @@
   <p class="intro">À faire avant de promettre quoi que ce soit à un client. Écoute, parle, et note ce qui sonne faux.</p>
 
   <section>
+    <h2>0. Vérifier la connexion</h2>
+    <p>Teste les trois modèles Cloudflare un par un. Si l'un échoue, la raison s'affiche ici.</p>
+    <div class="boutons">
+      <button id="diagnostic" class="principal" type="button">Lancer la vérification</button>
+    </div>
+    <p id="resultat-diagnostic" class="resultat" role="status"></p>
+  </section>
+
+  <section>
     <h2>1. Écouter la voix</h2>
     <label for="phrase">Phrase à faire lire</label>
     <select id="modele">
@@ -37,7 +46,7 @@
 
   <section>
     <h2>2. Tester la compréhension</h2>
-    <p>Touche le bouton, dis une phrase, puis attends. Essaie aussi avec un accent étranger : c'est ce que feront des élèves de français.</p>
+    <p>Touche le bouton, dis une phrase, puis attends la fin du silence (ou retouche le bouton pour terminer). Essaie aussi avec un accent étranger : c'est ce que feront des élèves de français.</p>
     <div class="boutons">
       <button id="micro" class="principal" type="button">Parler</button>
     </div>
